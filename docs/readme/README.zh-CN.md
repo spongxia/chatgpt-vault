@@ -4,6 +4,8 @@
 
 ![ChatGPT Vault 简体中文界面](../assets/readme/README.zh-CN.png)
 
+*全新的 ChatGPT Vault 工作区，导入聊天记录即可开始使用。*
+
 ChatGPT Vault 是一个本地优先、支持多语言的 ChatGPT 聊天记录管理器。它支持 Markdown、LaTeX、代码、表格、附件和折叠工具输出，也支持选择性增量同步与官方兼容的 `conversations.json` 导出。
 
 这是独立社区项目，与 OpenAI 没有隶属关系。

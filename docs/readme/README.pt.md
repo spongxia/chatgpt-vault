@@ -4,6 +4,8 @@
 
 ![Interface portuguesa do ChatGPT Vault](../assets/readme/README.pt.png)
 
+*Um espaço de trabalho novo do ChatGPT Vault — importe seu histórico para começar.*
+
 ChatGPT Vault é um arquivo local e multilíngue para gerenciar conversas do ChatGPT. Renderiza Markdown e LaTeX, mantém resultados de ferramentas e arquivos enviados recolhidos, oferece sincronização seletiva e exporta um `conversations.json` compatível com o formato oficial.
 
 Projeto comunitário independente, sem vínculo com a OpenAI.

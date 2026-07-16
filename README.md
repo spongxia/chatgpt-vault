@@ -6,7 +6,7 @@ ChatGPT Vault is a local-first workspace for importing, searching, reading, orga
 
 ![ChatGPT Vault English interface](docs/assets/readme/README.en.png)
 
-*The screenshot above is a clean sample workspace. It contains no personal conversations, files, URLs, or account information.*
+*A fresh ChatGPT Vault workspace—import your archive to get started.*
 
 ## What you can do
 

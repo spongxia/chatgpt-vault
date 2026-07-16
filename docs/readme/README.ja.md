@@ -4,6 +4,8 @@
 
 ![ChatGPT Vault 日本語インターフェース](../assets/readme/README.ja.png)
 
+*初回起動時の ChatGPT Vault。履歴をインポートして使い始められます。*
+
 ChatGPT Vault は、ChatGPT の会話をローカルで管理する多言語アーカイブです。Markdown、LaTeX、コード、表、引用を表示し、ツール出力やアップロードファイルを折りたたみます。選択的な差分同期と、公式互換の `conversations.json` 出力に対応します。
 
 OpenAI とは無関係の独立コミュニティプロジェクトです。
