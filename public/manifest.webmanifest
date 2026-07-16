@@ -1,0 +1,11 @@
+{
+  "name": "ChatGPT Vault",
+  "short_name": "ChatGPT Vault",
+  "lang": "en",
+  "description": "A local-first, multilingual ChatGPT conversation archive",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f6f2",
+  "theme_color": "#f7f6f2",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

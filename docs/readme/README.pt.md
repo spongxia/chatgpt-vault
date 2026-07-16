@@ -1,0 +1,35 @@
+# ChatGPT Vault
+
+ChatGPT Vault é um arquivo local e multilíngue para gerenciar conversas do ChatGPT. Renderiza Markdown e LaTeX, mantém resultados de ferramentas e arquivos enviados recolhidos, oferece sincronização seletiva e exporta um `conversations.json` compatível com o formato oficial.
+
+Projeto comunitário independente, sem vínculo com a OpenAI.
+
+## Recursos
+
+- Armazenamento JSON local sem banco de dados na nuvem nem API Key.
+- Interface de três colunas com navegação e lista recolhíveis separadamente.
+- Markdown, LaTeX, código, tabelas, citações, links, anexos e KaTeX local.
+- Resultados web, textos longos, chamadas de ferramentas e arquivos gerados recolhidos.
+- Userscript Tampermonkey/Violentmonkey para sincronização incremental selecionada.
+- Pesquisa, favoritos, arquivo, renomear, etiquetas, modo escuro e RTL árabe.
+- Exportação Markdown/JSON e `conversations.json` compatível.
+
+## Início rápido
+
+Requer Node.js 18+:
+
+```bash
+npm install
+npm start
+```
+
+Abra <http://127.0.0.1:4318>. Os dados são salvos em `data/conversations`.
+
+## Desenvolvimento
+
+```bash
+npm test
+npm run dev
+```
+
+Os dados são salvos por padrão em `data/conversations`. O repositório não inclui conversas pessoais, anexos, capturas, `data/` ou artefatos locais. Licença MIT.
