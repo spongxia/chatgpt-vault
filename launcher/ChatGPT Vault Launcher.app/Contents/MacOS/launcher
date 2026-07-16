@@ -1,0 +1,116 @@
+#!/bin/zsh
+
+set -u
+
+APP_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$APP_DIR/../../../.." && pwd)"
+URL="http://127.0.0.1:4318"
+LOG_DIR="$PROJECT_ROOT/data"
+LOG_FILE="$LOG_DIR/chatgpt-vault-launcher.log"
+PID_FILE="$LOG_DIR/chatgpt-vault-launcher.pid"
+NODE_DOWNLOAD_PAGE="https://nodejs.org/en/download/"
+NODE_DIST_PAGE="https://nodejs.org/dist/latest-v22.x/"
+
+export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
+
+if [[ -f "$HOME/.nvm/nvm.sh" ]]; then
+  source "$HOME/.nvm/nvm.sh" >/dev/null 2>&1 || true
+fi
+
+dialog() {
+  /usr/bin/osascript -e "display dialog \"$1\" buttons {\"好\"} default button \"好\" with title \"ChatGPT Vault\""
+}
+
+node_major() {
+  node -p 'process.versions.node.split(".")[0]' 2>/dev/null
+}
+
+node_is_ready() {
+  command -v node >/dev/null 2>&1 || return 1
+  local major
+  major="$(node_major)"
+  [[ "$major" == <-> ]] && (( major >= 18 ))
+}
+
+choose_node_install() {
+  /usr/bin/osascript <<'APPLESCRIPT'
+set response to display dialog "ChatGPT Vault 需要 Node.js 18 或更高版本才能运行。" & return & return & "是否现在安装 Node.js？" buttons {"取消", "打开官网下载页", "自动安装"} default button "自动安装" with title "ChatGPT Vault"
+return button returned of response
+APPLESCRIPT
+}
+
+install_node() {
+  local architecture pkg_name pkg_url pkg_path
+  architecture="$(uname -m)"
+  case "$architecture" in
+    arm64|x86_64) pkg_name="$(curl -fsSL --retry 2 "$NODE_DIST_PAGE" | grep -oE 'node-v22\.[0-9]+\.[0-9]+\.pkg' | head -n 1)" ;;
+    *) return 1 ;;
+  esac
+  [[ -n "$pkg_name" ]] || return 1
+  pkg_url="$NODE_DIST_PAGE$pkg_name"
+  pkg_path="/private/tmp/$pkg_name"
+  /usr/bin/osascript -e 'display notification "正在下载 Node.js 安装包…" with title "ChatGPT Vault"'
+  curl -fL --retry 2 --retry-delay 1 "$pkg_url" -o "$pkg_path" >/dev/null 2>&1 || return 1
+  /usr/bin/osascript <<APPLESCRIPT
+do shell script "/usr/sbin/installer -pkg " & quoted form of "$pkg_path" & " -target /" with administrator privileges
+APPLESCRIPT
+  rm -f "$pkg_path"
+}
+
+if ! node_is_ready; then
+  choice="$(choose_node_install)"
+  case "$choice" in
+    "自动安装")
+      if ! install_node; then
+        dialog "Node.js 自动安装失败。你可以打开 Node.js 官网手动安装，然后再次双击启动器。"
+        open "$NODE_DOWNLOAD_PAGE"
+        exit 1
+      fi
+      export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
+      node_is_ready || {
+        dialog "Node.js 已安装，但当前启动器还没有检测到它。请重新双击 ChatGPT Vault Launcher。"
+        exit 1
+      }
+      ;;
+    "打开官网下载页")
+      open "$NODE_DOWNLOAD_PAGE"
+      exit 0
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
+fi
+
+command -v npm >/dev/null 2>&1 || {
+  dialog "已检测到 Node.js，但没有找到 npm。请重新安装 Node.js 官方版本。"
+  exit 1
+}
+
+mkdir -p "$LOG_DIR"
+if [[ ! -f "$PROJECT_ROOT/node_modules/katex/package.json" ]]; then
+  /usr/bin/osascript -e 'display notification "正在准备应用依赖，请稍候…" with title "ChatGPT Vault"'
+  if ! (cd "$PROJECT_ROOT" && npm install >>"$LOG_FILE" 2>&1); then
+    dialog "依赖安装失败。详细信息已写入 data/chatgpt-vault-launcher.log。"
+    exit 1
+  fi
+fi
+
+if ! curl -fsS --max-time 2 "$URL/api/health" >/dev/null 2>&1; then
+  (
+    cd "$PROJECT_ROOT"
+    nohup node server.mjs >>"$LOG_FILE" 2>&1 &
+    echo $! >"$PID_FILE"
+  )
+  for _ in {1..30}; do
+    curl -fsS --max-time 1 "$URL/api/health" >/dev/null 2>&1 && break
+    sleep 0.5
+  done
+fi
+
+if ! curl -fsS --max-time 2 "$URL/api/health" >/dev/null 2>&1; then
+  dialog "ChatGPT Vault 本地服务启动失败。详细信息已写入 data/chatgpt-vault-launcher.log。"
+  exit 1
+fi
+
+open "$URL"

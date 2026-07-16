@@ -17,6 +17,7 @@ English、简体中文、Français、Español、日本語、العربية、Deu
 - 可选 Tampermonkey/Violentmonkey 油猴脚本，按选择增量同步。
 - 搜索、收藏、归档、重命名、标签、暗色模式和阿拉伯语 RTL 布局。
 - 单条会话导出 Markdown/JSON，以及官方兼容的 `conversations.json`。
+- 提供零依赖 macOS 启动器，可检测并安装 Node.js、启动本地服务并自动打开浏览器。
 - 以轻量本地 Web 应用运行，可按需要使用任意桌面封装工具。
 
 ## 快速开始
@@ -29,6 +30,8 @@ npm start
 ```
 
 打开 <http://127.0.0.1:4318>。默认数据目录为 `data/conversations`，也可以使用 `CHATGPT_VAULT_DATA_DIR` 修改。
+
+在 macOS 上也可以直接双击 [ChatGPT Vault Launcher.app](../../launcher/ChatGPT%20Vault%20Launcher.app)，无需打开终端。请保持启动器位于项目根目录的 `launcher/` 文件夹中。
 
 ## 选择性同步
 

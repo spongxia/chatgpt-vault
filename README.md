@@ -26,8 +26,9 @@ Read the documentation in another language:
 - Markdown, code blocks, tables, block quotes, links, attachments, and local KaTeX rendering.
 - Folded tool calls, web results, uploaded text, and generated files.
 - Selective incremental sync through the optional Tampermonkey/Violentmonkey userscript.
-- Search, favorites, archive, rename, tags, dark mode, RTL Arabic layout, and 10 UI languages.
+- Search, favorites, archive, rename, tags, dark mode, RTL Arabic layout, and 9 UI languages.
 - Single-chat Markdown/JSON export and official-compatible `conversations.json` export.
+- A zero-dependency macOS launcher that checks Node.js, offers installation, starts the local service, and opens the browser.
 - Runs as a lightweight local web app; package it with the toolchain you prefer.
 
 ## Quick start
@@ -46,6 +47,8 @@ The default data directory is `data/conversations`. Override it when needed:
 ```bash
 CHATGPT_VAULT_DATA_DIR=/path/to/conversations npm start
 ```
+
+On macOS, double-click [ChatGPT Vault Launcher.app](launcher/ChatGPT%20Vault%20Launcher.app) to perform the same setup without opening a terminal. Keep the app bundle inside the repository's `launcher/` directory.
 
 ## Selective sync
 
