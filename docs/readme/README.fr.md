@@ -1,5 +1,9 @@
 # ChatGPT Vault
 
+> **Langue du README :** [English](../../README.md) · [简体中文](README.zh-CN.md) · [Français](README.fr.md) · [Español](README.es.md) · [日本語](README.ja.md) · [العربية](README.ar.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Português](README.pt.md)
+
+![Interface française de ChatGPT Vault](../assets/readme/README.fr.png)
+
 ChatGPT Vault est une archive locale et multilingue pour gérer les conversations ChatGPT. L’application rend le Markdown et LaTeX, replie les outils et les fichiers importés, permet une synchronisation sélective et exporte un `conversations.json` compatible avec le format officiel.
 
 Projet communautaire indépendant, sans affiliation avec OpenAI.

@@ -1,8 +1,10 @@
 # ChatGPT Vault
 
+> **README language:** [English](README.md) · [简体中文](docs/readme/README.zh-CN.md) · [Français](docs/readme/README.fr.md) · [Español](docs/readme/README.es.md) · [日本語](docs/readme/README.ja.md) · [العربية](docs/readme/README.ar.md) · [Deutsch](docs/readme/README.de.md) · [Italiano](docs/readme/README.it.md) · [Português](docs/readme/README.pt.md)
+
 ChatGPT Vault is a local-first workspace for importing, searching, reading, organizing, and exporting your ChatGPT conversations. It is designed to feel closer to the ChatGPT web experience while keeping your archive on your own computer.
 
-![ChatGPT Vault blank workspace](docs/assets/chatgpt-vault-overview.png)
+![ChatGPT Vault English interface](docs/assets/readme/README.en.png)
 
 *The screenshot above is a clean sample workspace. It contains no personal conversations, files, URLs, or account information.*
 

@@ -1,5 +1,9 @@
 # ChatGPT Vault
 
+> **README の言語:** [English](../../README.md) · [简体中文](README.zh-CN.md) · [Français](README.fr.md) · [Español](README.es.md) · [日本語](README.ja.md) · [العربية](README.ar.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Português](README.pt.md)
+
+![ChatGPT Vault 日本語インターフェース](../assets/readme/README.ja.png)
+
 ChatGPT Vault は、ChatGPT の会話をローカルで管理する多言語アーカイブです。Markdown、LaTeX、コード、表、引用を表示し、ツール出力やアップロードファイルを折りたたみます。選択的な差分同期と、公式互換の `conversations.json` 出力に対応します。
 
 OpenAI とは無関係の独立コミュニティプロジェクトです。
