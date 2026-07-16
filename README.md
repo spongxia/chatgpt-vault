@@ -6,12 +6,11 @@ It is an independent community project and is not affiliated with OpenAI.
 
 ## Languages
 
-English · 简体中文 · 繁體中文 · Français · Español · 日本語 · العربية · Deutsch · Italiano · Português
+English · 简体中文 · Français · Español · 日本語 · العربية · Deutsch · Italiano · Português
 
 Read the documentation in another language:
 
 - [简体中文](docs/readme/README.zh-CN.md)
-- [繁體中文](docs/readme/README.zh-TW.md)
 - [Français](docs/readme/README.fr.md)
 - [Español](docs/readme/README.es.md)
 - [日本語](docs/readme/README.ja.md)

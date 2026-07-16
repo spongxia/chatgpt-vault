@@ -170,43 +170,6 @@ const translations = {
     uploadedInConversation: '会话中的上传文件', externalLink: '外部链接', code: '代码', copy: '复制', codeCopied: '代码已复制',
     toolOutputCopied: '工具输出已复制', messageCopied: '消息已复制'
   },
-  'zh-TW': {
-    brandTagline: '你的本機對話庫', importChats: '匯入聊天記錄', allChats: '所有對話', favorites: '收藏', archived: '已封存', tags: '標籤',
-    tagEmpty: '匯入後可為對話加入標籤', localOnly: '僅儲存在這台電腦', connecting: '正在連接本機服務…', connected: '本機服務已連接',
-    connectionFailed: '本機服務連接失敗', importHelp: '匯入與同步說明', toggleTheme: '切換外觀', language: '語言',
-    collapseSidebar: '收合左欄', expandSidebar: '展開左欄', collapseList: '收合對話清單', expandList: '展開對話清單',
-    exportAll: '匯出 conversations.json', searchPlaceholder: '搜尋標題或聊天內容', clearSearch: '清除搜尋',
-    welcomeTitle: '聊天記錄，終於真正屬於你', welcomeBody: '批次匯入 ChatGPT 資料，在本機搜尋、整理與閱讀。所有內容只保存在這台電腦。',
-    startImport: '開始匯入', fullTextSearch: '全文搜尋', fullTextSearchDesc: '快速找回聊過的內容', organizeTags: '標籤整理',
-    organizeTagsDesc: '依專案與主題歸檔', exportAnytime: '隨時匯出', exportAnytimeDesc: 'Markdown、JSON 或 conversations.json',
-    conversationInfo: '對話資訊', source: '來源', created: '建立時間', conversationMessages: '對話訊息', toolRecords: '已收合工具記錄',
-    noTags: '尚未加入標籤', openOriginal: '開啟原始對話 ↗', missingSource: '未儲存來源連結', addToLibrary: '加入本機資料庫',
-    importHistory: '匯入聊天記錄', dropFiles: '將檔案拖到這裡', chooseHint: '或點選 ZIP、JSON、Markdown 檔案', chooseFiles: '選擇檔案',
-    backup: '備份', officialZip: 'ChatGPT 資料匯出 ZIP', officialZipDesc: '適合完整備份', officialJsonDesc: '官方匯出的 conversations.json',
-    markdownFiles: 'Markdown 檔案', markdownFilesDesc: '相容現有匯出腳本', processing: '正在整理聊天記錄…', cancel: '取消',
-    firstUse: '第一次使用', bringHome: '把所有聊天帶回本機', installSync: '安裝選擇性同步腳本',
-    installSyncDesc: '會在 ChatGPT 頁面加入「同步到 ChatGPT Vault」按鈕。', openUserScript: '開啟使用者腳本', scanRemote: '掃描完整遠端目錄',
-    scanRemoteDesc: '逐頁讀取一般與封存對話。', selectiveSync: '選擇後增量同步', selectiveSyncDesc: '只下載選取的新增或變更對話。',
-    dataStays: '資料不會離開本機', dataStaysDesc: '記錄以可讀 JSON 儲存在應用程式資料目錄。', gotIt: '知道了', save: '儲存',
-    rename: '重新命名', editTags: '編輯標籤', archive: '封存', delete: '刪除', markdownDesc: '適合閱讀與筆記軟體',
-    jsonDesc: '保留完整結構化資料', noResults: '找不到相關對話', noChats: '這裡還沒有對話', shorterSearch: '請嘗試更短的關鍵字。',
-    importToStart: '匯入 ChatGPT 資料後，對話會出現在這裡。', noPreview: '沒有預覽', foundResults: '找到 {count} 筆結果',
-    records: '{count} 筆記錄', chats: '{count} 則對話訊息', tools: '{count} 筆工具記錄', today: '今天', yesterday: '昨天',
-    recent7: '最近 7 天', daysAgo: '{count} 天前', weeksAgo: '{count} 週前', unknownTime: '未知時間',
-    requestFailed: '要求失敗', invalidZip: 'ZIP 檔案無效', unsupportedZip: '不支援此 ZIP 壓縮方式',
-    conversationsMissing: 'ZIP 中找不到 conversations.json', unsupportedFile: '不支援檔案「{name}」',
-    noImportable: '找不到可匯入的聊天記錄', processed: '已處理 {done} / {total}…',
-    importComplete: '匯入完成：新增 {imported}，更新 {updated}', importFailed: '匯入失敗：{message}', exported: '已匯出 {format}',
-    exportAllDone: '已匯出 conversations.json（{count} 筆）', exportFailed: '匯出失敗：{message}',
-    confirmDelete: '確定刪除「{title}」嗎？此操作無法復原。', deleted: '對話已刪除', organizeConversation: '整理對話',
-    conversationTitle: '對話標題', titleUpdated: '標題已更新', tagsHint: '多個標籤請以逗號分隔', tagsUpdated: '標籤已更新',
-    unarchived: '已移出封存', archivedDone: '已封存', favoriteAdded: '已加入收藏', favoriteRemoved: '已取消收藏',
-    untitled: '未命名對話', userName: '你', toolFile: '讀取上傳檔案', toolWeb: '網頁搜尋', toolProduct: '商品搜尋',
-    toolCode: '執行程式碼', toolImage: '產生或讀取圖片', toolGeneric: '工具呼叫', characters: '{count} 字元', items: '{count} 項',
-    uploadedFile: '上傳的檔案', audioAttachment: '音訊附件', chatgptUpload: 'ChatGPT 上傳檔案', generatedFile: '原對話產生的檔案',
-    openLink: '開啟引用連結', sources: '來源 · {count}', missingUrl: '原始記錄未包含網址', uploadedInConversation: '對話中的上傳檔案',
-    externalLink: '外部連結', code: '程式碼', copy: '複製', codeCopied: '程式碼已複製', toolOutputCopied: '工具輸出已複製', messageCopied: '訊息已複製'
-  },
   fr: {
     brandTagline: 'Votre bibliothèque de conversations locale', importChats: 'Importer des discussions', allChats: 'Toutes les discussions',
     favorites: 'Favoris', archived: 'Archivées', tags: 'Étiquettes', tagEmpty: 'Ajoutez des étiquettes après l’importation',
@@ -518,7 +481,6 @@ const translations = {
 export const LANGUAGE_OPTIONS = [
   ['en', 'English'],
   ['zh-CN', '简体中文'],
-  ['zh-TW', '繁體中文'],
   ['fr', 'Français'],
   ['es', 'Español'],
   ['ja', '日本語'],
@@ -534,7 +496,6 @@ function normalizeLanguage(value) {
   const language = String(value || '').replace('_', '-');
   if (translations[language]) return language;
   const lower = language.toLowerCase();
-  if (lower.startsWith('zh-tw') || lower.startsWith('zh-hk') || lower.startsWith('zh-hant')) return 'zh-TW';
   if (lower.startsWith('zh')) return 'zh-CN';
   return LANGUAGE_OPTIONS.find(([code]) => lower.startsWith(code.toLowerCase()))?.[0] || 'en';
 }

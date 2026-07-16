@@ -6,7 +6,7 @@ ChatGPT Vault 是一个本地优先、支持多语言的 ChatGPT 聊天记录管
 
 ## 支持语言
 
-English、简体中文、繁體中文、Français、Español、日本語、العربية、Deutsch、Italiano、Português。
+English、简体中文、Français、Español、日本語、العربية、Deutsch、Italiano、Português。
 
 ## 主要功能
 

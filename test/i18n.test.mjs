@@ -10,7 +10,7 @@ import {
 test('ships all requested interface languages', () => {
   assert.deepEqual(
     LANGUAGE_OPTIONS.map(([code]) => code),
-    ['en', 'zh-CN', 'zh-TW', 'fr', 'es', 'ja', 'ar', 'de', 'it', 'pt']
+    ['en', 'zh-CN', 'fr', 'es', 'ja', 'ar', 'de', 'it', 'pt']
   );
 });
 
