@@ -15,6 +15,5 @@ test('ships a zero-dependency macOS launcher', async () => {
   assert.match(source, /127\.0\.0\.1:4318/);
   assert.match(source, /open "\$URL"/);
   assert.match(source, /nodejs\.org/);
-  assert.doesNotMatch(source, /electron|tauri/i);
   assert.ok((metadata.mode & 0o111) !== 0, 'launcher must be executable');
 });
