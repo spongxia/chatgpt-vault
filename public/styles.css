@@ -188,7 +188,7 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 .reader-actions { display: flex; align-items: center; gap: 1px; }
 #favorite-button.active { color: #bc8a18; }
 #favorite-button.active svg { fill: currentColor; }
-.messages { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+.messages { flex: 1; overflow-y: auto; }
 .message { width: min(820px, calc(100% - 64px)); margin: 0 auto; padding: 26px 0 10px; }
 .message + .message { border-top: 0; }
 .message-head { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
@@ -199,9 +199,10 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 .message.user .message-avatar svg { display: none; }
 .message-head strong { font-size: 11px; }
 .message-head time { margin-left: auto; color: var(--faint); font-size: 9px; }
-.copy-message { width: 27px; height: 27px; color: var(--faint); opacity: 0; }
-.copy-message svg { width: 14px; }
-.message:hover .copy-message { opacity: 1; }
+.copy-message, .edit-message { width: 27px; height: 27px; color: var(--faint); opacity: 0; }
+.copy-message svg, .edit-message svg { width: 14px; }
+.edit-message { opacity: .55; }
+.message:hover .copy-message, .message:hover .edit-message, .copy-message:focus-visible, .edit-message:focus-visible { opacity: 1; }
 .message.user { display: flex; align-items: flex-end; flex-direction: column; }
 .message.user .message-head { width: min(72%, 650px); }
 .message.user .message-body {
@@ -358,9 +359,12 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 @keyframes progress { from { transform: translateX(-120%); } to { transform: translateX(360%); } }
 
 .compact-modal { width: min(430px, calc(100vw - 28px)); }
+.edit-message-modal { width: min(720px, calc(100vw - 28px)); }
 .field-label { margin-bottom: 7px; color: var(--muted); font-size: 10px; font-weight: 650; }
 .text-field { width: 100%; padding: 10px 11px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; outline: none; }
 .text-field:focus { border-color: var(--accent); }
+.message-textarea { width: 100%; min-height: 280px; padding: 12px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; outline: none; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; resize: vertical; }
+.message-textarea:focus { border-color: var(--accent); }
 .field-hint { min-height: 15px; margin: 7px 0 0; color: var(--faint); font-size: 9px; line-height: 1.5; }
 .help-modal { width: min(560px, calc(100vw - 28px)); }
 .steps { display: flex; flex-direction: column; gap: 18px; padding: 0; list-style: none; }

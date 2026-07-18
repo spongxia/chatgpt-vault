@@ -181,6 +181,28 @@ async function updateConversation(id, changes) {
   return updated;
 }
 
+export async function updateConversationMessage(id, messageId, changes) {
+  const existing = await loadConversation(id);
+  if (!existing) return null;
+  if (typeof changes?.content !== 'string' || !changes.content.trim()) {
+    throw Object.assign(new Error('消息内容不能为空'), { status: 400 });
+  }
+  const index = (existing.messages || []).findIndex(message => message.id === messageId);
+  if (index < 0) throw Object.assign(new Error('没有找到这条消息'), { status: 404 });
+
+  const editedAt = new Date().toISOString();
+  const messages = existing.messages.map((message, messageIndex) => messageIndex === index
+    ? {
+        ...message,
+        content: changes.content.trim(),
+        metadata: { ...(message.metadata || {}), vaultEditedAt: editedAt }
+      }
+    : message);
+  const updated = { ...existing, messages, updatedAt: editedAt };
+  await saveConversation(updated);
+  return updated;
+}
+
 async function serveFile(response, root, requestedPath) {
   const safePath = normalize(requestedPath).replace(new RegExp(`^\\.${sep}`), '');
   const target = resolve(root, safePath);
@@ -239,6 +261,18 @@ export function createChatGptVaultServer() {
       if (request.method === 'POST' && url.pathname === '/api/conversations/import') {
         const result = await importConversations(await readBody(request));
         return json(response, 200, result, cors);
+      }
+
+      const messageMatch = url.pathname.match(/^\/api\/conversations\/([^/]+)\/messages\/([^/]+)$/);
+      if (messageMatch && request.method === 'PATCH') {
+        const conversation = await updateConversationMessage(
+          decodeURIComponent(messageMatch[1]),
+          decodeURIComponent(messageMatch[2]),
+          await readBody(request)
+        );
+        return conversation
+          ? json(response, 200, { conversation }, cors)
+          : json(response, 404, { error: '没有找到这条对话' }, cors);
       }
 
       const match = url.pathname.match(/^\/api\/conversations\/([^/]+)$/);

@@ -130,7 +130,9 @@ const translations = {
     copy: 'Copy',
     codeCopied: 'Code copied',
     toolOutputCopied: 'Tool output copied',
-    messageCopied: 'Message copied'
+    messageCopied: 'Message copied', editMessage: 'Edit message', editMessageKicker: 'Edit local record',
+    messageContent: 'Message content', editMessageHint: 'Local edits are preserved during later syncs.',
+    messageUpdated: 'Message updated', messageEmpty: 'Message content cannot be empty'
   },
   'zh-CN': {
     brandTagline: '你的本地对话库', importChats: '导入聊天记录', allChats: '全部对话', favorites: '收藏', archived: '已归档', tags: '标签',
@@ -168,7 +170,8 @@ const translations = {
     uploadedFile: '上传的文件', audioAttachment: '音频附件', chatgptUpload: 'ChatGPT 上传文件', generatedFile: '原会话生成文件',
     openLink: '打开引用链接', sources: '来源 · {count}', missingUrl: '原始来源信息未包含网址',
     uploadedInConversation: '会话中的上传文件', externalLink: '外部链接', code: '代码', copy: '复制', codeCopied: '代码已复制',
-    toolOutputCopied: '工具输出已复制', messageCopied: '消息已复制'
+    toolOutputCopied: '工具输出已复制', messageCopied: '消息已复制', editMessage: '编辑消息', editMessageKicker: '编辑本地记录',
+    messageContent: '消息内容', editMessageHint: '本地编辑会在后续同步时保留。', messageUpdated: '消息已更新', messageEmpty: '消息内容不能为空'
   },
   fr: {
     brandTagline: 'Votre bibliothèque de conversations locale', importChats: 'Importer des discussions', allChats: 'Toutes les discussions',
@@ -211,7 +214,9 @@ const translations = {
     items: '{count} éléments', uploadedFile: 'Fichier importé', audioAttachment: 'Pièce jointe audio', chatgptUpload: 'Fichier ChatGPT',
     generatedFile: 'Fichier généré dans la discussion', openLink: 'Ouvrir le lien', sources: 'Sources · {count}',
     missingUrl: 'L’enregistrement d’origine ne contient pas d’URL', uploadedInConversation: 'Importé dans cette conversation',
-    externalLink: 'Lien externe', code: 'code', copy: 'Copier', codeCopied: 'Code copié', toolOutputCopied: 'Sortie copiée', messageCopied: 'Message copié'
+    externalLink: 'Lien externe', code: 'code', copy: 'Copier', codeCopied: 'Code copié', toolOutputCopied: 'Sortie copiée', messageCopied: 'Message copié',
+    editMessage: 'Modifier le message', editMessageKicker: 'Modifier la copie locale', messageContent: 'Contenu du message',
+    editMessageHint: 'Les modifications locales sont conservées lors des synchronisations ultérieures.', messageUpdated: 'Message mis à jour', messageEmpty: 'Le message ne peut pas être vide'
   },
   es: {
     brandTagline: 'Tu biblioteca local de conversaciones', importChats: 'Importar chats', allChats: 'Todos los chats', favorites: 'Favoritos',
@@ -254,7 +259,9 @@ const translations = {
     items: '{count} elementos', uploadedFile: 'Archivo subido', audioAttachment: 'Adjunto de audio', chatgptUpload: 'Archivo de ChatGPT',
     generatedFile: 'Archivo generado en el chat', openLink: 'Abrir enlace', sources: 'Fuentes · {count}',
     missingUrl: 'El registro original no incluía URL', uploadedInConversation: 'Subido en esta conversación',
-    externalLink: 'Enlace externo', code: 'código', copy: 'Copiar', codeCopied: 'Código copiado', toolOutputCopied: 'Salida copiada', messageCopied: 'Mensaje copiado'
+    externalLink: 'Enlace externo', code: 'código', copy: 'Copiar', codeCopied: 'Código copiado', toolOutputCopied: 'Salida copiada', messageCopied: 'Mensaje copiado',
+    editMessage: 'Editar mensaje', editMessageKicker: 'Editar registro local', messageContent: 'Contenido del mensaje',
+    editMessageHint: 'Los cambios locales se conservan en sincronizaciones posteriores.', messageUpdated: 'Mensaje actualizado', messageEmpty: 'El mensaje no puede estar vacío'
   },
   ja: {
     brandTagline: 'ローカル会話ライブラリ', importChats: 'チャットをインポート', allChats: 'すべてのチャット', favorites: 'お気に入り',
@@ -298,7 +305,8 @@ const translations = {
     chatgptUpload: 'ChatGPT アップロード', generatedFile: '元の会話で生成されたファイル', openLink: '参照リンクを開く',
     sources: '出典 · {count}', missingUrl: '元の記録に URL がありません', uploadedInConversation: 'この会話のアップロード',
     externalLink: '外部リンク', code: 'コード', copy: 'コピー', codeCopied: 'コードをコピーしました',
-    toolOutputCopied: 'ツール出力をコピーしました', messageCopied: 'メッセージをコピーしました'
+    toolOutputCopied: 'ツール出力をコピーしました', messageCopied: 'メッセージをコピーしました', editMessage: 'メッセージを編集', editMessageKicker: 'ローカル記録を編集',
+    messageContent: 'メッセージ内容', editMessageHint: 'ローカルの編集内容は後の同期でも保持されます。', messageUpdated: 'メッセージを更新しました', messageEmpty: 'メッセージ内容を入力してください'
   },
   ar: {
     brandTagline: 'مكتبة محادثاتك المحلية', importChats: 'استيراد المحادثات', allChats: 'كل المحادثات', favorites: 'المفضلة',
@@ -340,7 +348,9 @@ const translations = {
     audioAttachment: 'مرفق صوتي', chatgptUpload: 'ملف ChatGPT', generatedFile: 'ملف أُنشئ في المحادثة الأصلية',
     openLink: 'فتح رابط المرجع', sources: 'المصادر · {count}', missingUrl: 'السجل الأصلي لا يحتوي على رابط',
     uploadedInConversation: 'مرفوع في هذه المحادثة', externalLink: 'رابط خارجي', code: 'كود', copy: 'نسخ',
-    codeCopied: 'تم نسخ الكود', toolOutputCopied: 'تم نسخ مخرجات الأداة', messageCopied: 'تم نسخ الرسالة'
+    codeCopied: 'تم نسخ الكود', toolOutputCopied: 'تم نسخ مخرجات الأداة', messageCopied: 'تم نسخ الرسالة',
+    editMessage: 'تعديل الرسالة', editMessageKicker: 'تعديل السجل المحلي', messageContent: 'محتوى الرسالة',
+    editMessageHint: 'تُحفظ التعديلات المحلية عند المزامنة لاحقًا.', messageUpdated: 'تم تحديث الرسالة', messageEmpty: 'لا يمكن أن تكون الرسالة فارغة'
   },
   de: {
     brandTagline: 'Deine lokale Gesprächsbibliothek', importChats: 'Chats importieren', allChats: 'Alle Chats', favorites: 'Favoriten',
@@ -385,7 +395,8 @@ const translations = {
     chatgptUpload: 'ChatGPT-Datei', generatedFile: 'Im ursprünglichen Chat erzeugte Datei', openLink: 'Referenzlink öffnen',
     sources: 'Quellen · {count}', missingUrl: 'Der Originaldatensatz enthält keine URL', uploadedInConversation: 'In diesem Gespräch hochgeladen',
     externalLink: 'Externer Link', code: 'Code', copy: 'Kopieren', codeCopied: 'Code kopiert',
-    toolOutputCopied: 'Werkzeugausgabe kopiert', messageCopied: 'Nachricht kopiert'
+    toolOutputCopied: 'Werkzeugausgabe kopiert', messageCopied: 'Nachricht kopiert', editMessage: 'Nachricht bearbeiten', editMessageKicker: 'Lokalen Eintrag bearbeiten',
+    messageContent: 'Nachrichteninhalt', editMessageHint: 'Lokale Änderungen bleiben bei späteren Synchronisierungen erhalten.', messageUpdated: 'Nachricht aktualisiert', messageEmpty: 'Die Nachricht darf nicht leer sein'
   },
   it: {
     brandTagline: 'La tua libreria locale di conversazioni', importChats: 'Importa chat', allChats: 'Tutte le chat', favorites: 'Preferiti',
@@ -429,7 +440,8 @@ const translations = {
     chatgptUpload: 'File ChatGPT', generatedFile: 'File generato nella chat originale', openLink: 'Apri link',
     sources: 'Fonti · {count}', missingUrl: 'Il record originale non contiene URL', uploadedInConversation: 'Caricato in questa conversazione',
     externalLink: 'Link esterno', code: 'codice', copy: 'Copia', codeCopied: 'Codice copiato',
-    toolOutputCopied: 'Output copiato', messageCopied: 'Messaggio copiato'
+    toolOutputCopied: 'Output copiato', messageCopied: 'Messaggio copiato', editMessage: 'Modifica messaggio', editMessageKicker: 'Modifica record locale',
+    messageContent: 'Contenuto del messaggio', editMessageHint: 'Le modifiche locali vengono mantenute nelle sincronizzazioni successive.', messageUpdated: 'Messaggio aggiornato', messageEmpty: 'Il messaggio non può essere vuoto'
   },
   pt: {
     brandTagline: 'Sua biblioteca local de conversas', importChats: 'Importar conversas', allChats: 'Todas as conversas', favorites: 'Favoritas',
@@ -474,7 +486,8 @@ const translations = {
     chatgptUpload: 'Arquivo ChatGPT', generatedFile: 'Arquivo gerado no chat original', openLink: 'Abrir link',
     sources: 'Fontes · {count}', missingUrl: 'O registro original não contém URL', uploadedInConversation: 'Enviado nesta conversa',
     externalLink: 'Link externo', code: 'código', copy: 'Copiar', codeCopied: 'Código copiado',
-    toolOutputCopied: 'Saída copiada', messageCopied: 'Mensagem copiada'
+    toolOutputCopied: 'Saída copiada', messageCopied: 'Mensagem copiada', editMessage: 'Editar mensagem', editMessageKicker: 'Editar registro local',
+    messageContent: 'Conteúdo da mensagem', editMessageHint: 'As edições locais são preservadas nas sincronizações futuras.', messageUpdated: 'Mensagem atualizada', messageEmpty: 'A mensagem não pode estar vazia'
   }
 };
 

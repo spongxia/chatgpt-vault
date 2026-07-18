@@ -22,5 +22,7 @@ test('each language provides translated core and renderer labels', () => {
     assert.notEqual(t('importChats'), 'importChats');
     assert.notEqual(t('toolWeb'), 'toolWeb');
     assert.notEqual(t('sources', { count: 3 }), 'sources');
+    assert.notEqual(t('editMessage'), 'editMessage');
+    assert.notEqual(t('messageUpdated'), 'messageUpdated');
   }
 });

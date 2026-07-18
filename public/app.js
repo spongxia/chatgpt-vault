@@ -2,8 +2,8 @@ import { handleRichContentClick, isInternalToolMessage, renderConversationMessag
 import { getLocale, initI18n, LANGUAGE_OPTIONS, setLanguage, t } from './i18n.js';
 
 const $ = function (selector) { return document.querySelector(selector); };
-const E = { app: $('.app-shell'), sidebar: $('#sidebar'), scrim: $('#scrim'), list: $('#conversation-list'), listTitle: $('#list-title'), listSubtitle: $('#list-subtitle'), search: $('#search-input'), clearSearch: $('#clear-search'), exportAll: $('#export-all-button'), tagNav: $('#tag-nav'), all: $('#count-all'), favoriteCount: $('#count-favorite'), archived: $('#count-archived'), storage: $('#storage-status'), language: $('#language-select'), welcome: $('#welcome-view'), reader: $('#reader-view'), title: $('#reader-title'), meta: $('#reader-meta'), messages: $('#messages'), favorite: $('#favorite-button'), export: $('#export-button'), more: $('#more-button'), detailsButton: $('#details-button'), details: $('#details-drawer'), detailsContent: $('#details-content'), importDialog: $('#import-dialog'), dropZone: $('#drop-zone'), files: $('#file-input'), progress: $('#import-progress'), moreMenu: $('#more-menu'), exportMenu: $('#export-menu'), textDialog: $('#text-dialog'), textKicker: $('#text-dialog-kicker'), textTitle: $('#text-dialog-title'), textLabel: $('#text-dialog-label'), textInput: $('#text-dialog-input'), textHint: $('#text-dialog-hint'), toasts: $('#toast-region') };
-const S = { conversations: [], results: null, current: null, activeId: null, filter: 'all', tag: null, query: '', timer: null, action: null };
+const E = { app: $('.app-shell'), sidebar: $('#sidebar'), scrim: $('#scrim'), list: $('#conversation-list'), listTitle: $('#list-title'), listSubtitle: $('#list-subtitle'), search: $('#search-input'), clearSearch: $('#clear-search'), exportAll: $('#export-all-button'), tagNav: $('#tag-nav'), all: $('#count-all'), favoriteCount: $('#count-favorite'), archived: $('#count-archived'), storage: $('#storage-status'), language: $('#language-select'), welcome: $('#welcome-view'), reader: $('#reader-view'), title: $('#reader-title'), meta: $('#reader-meta'), messages: $('#messages'), favorite: $('#favorite-button'), export: $('#export-button'), more: $('#more-button'), detailsButton: $('#details-button'), details: $('#details-drawer'), detailsContent: $('#details-content'), importDialog: $('#import-dialog'), dropZone: $('#drop-zone'), files: $('#file-input'), progress: $('#import-progress'), moreMenu: $('#more-menu'), exportMenu: $('#export-menu'), textDialog: $('#text-dialog'), textKicker: $('#text-dialog-kicker'), textTitle: $('#text-dialog-title'), textLabel: $('#text-dialog-label'), textInput: $('#text-dialog-input'), textHint: $('#text-dialog-hint'), messageDialog: $('#message-dialog'), messageInput: $('#message-dialog-input'), toasts: $('#toast-region') };
+const S = { conversations: [], results: null, current: null, activeId: null, filter: 'all', tag: null, query: '', timer: null, action: null, editingMessage: null };
 const COLORS = ['#1f806b', '#a66a24', '#8063a6', '#b04e5a', '#3d72a4', '#6c7f39'];
 
 async function api(path, options) { options = options || {}; const response = await fetch(path, Object.assign({}, options, { headers: Object.assign({ 'Content-Type': 'application/json', 'X-ChatGPT-Vault': '1' }, options.headers || {}) })); const data = await response.json().catch(function () { return {}; }); if (!response.ok) throw new Error(data.error || t('requestFailed')); return data; }
@@ -23,7 +23,7 @@ function renderList() {
   if (!list.length) { E.list.innerHTML = '<div class="list-empty"><svg><use href="#i-search"></use></svg><strong>' + esc(S.query ? t('noResults') : t('noChats')) + '</strong><p>' + esc(S.query ? t('shorterSearch') : t('importToStart')) + '</p></div>'; return; }
   let old = '', html = ''; list.forEach(function (c) { const heading = group(c.updatedAt); if (heading !== old) { html += '<div class="date-group">' + esc(heading) + '</div>'; old = heading; } html += '<button class="conversation-card ' + (c.id === S.activeId ? 'active' : '') + '" data-id="' + esc(c.id) + '"><span class="card-copy"><span class="card-title-row"><h3>' + esc(c.title) + '</h3>' + (c.favorite ? '<svg class="mini-star"><use href="#i-star"></use></svg>' : '') + '</span><p>' + esc(c.preview || t('noPreview')) + '</p><span class="card-foot"><time>' + relative(c.updatedAt) + '</time>' + c.tags.slice(0, 1).map(function (tag) { return '<span class="mini-tag">' + esc(tag) + '</span>'; }).join('') + '<span>' + esc(t('chats', { count: c.visibleMessageCount || c.messageCount })) + '</span></span></span></button>'; }); E.list.innerHTML = html;
 }
-function renderReader() {
+function renderReader(scrollTop = 0) {
   const c = S.current;
   E.welcome.hidden = Boolean(c);
   E.reader.hidden = !c;
@@ -36,13 +36,32 @@ function renderReader() {
   E.meta.innerHTML = '<span>' + date(c.createdAt) + '</span><span>' + esc(t('chats', { count: visibleMessages.length })) + '</span>' + (toolMessages ? '<span>' + esc(t('tools', { count: toolMessages })) + '</span>' : '') + (c.model ? '<span>' + esc(c.model) + '</span>' : '');
   E.favorite.classList.toggle('active', c.favorite);
   E.messages.innerHTML = renderConversationMessages(c);
-  E.messages.scrollTop = 0;
+  E.messages.scrollTop = scrollTop;
   const source = c.sourceUrl ? '<a class="detail-source" href="' + esc(href(c.sourceUrl)) + '" target="_blank" rel="noreferrer">' + esc(t('openOriginal')) + '</a>' : esc(t('missingSource'));
   E.detailsContent.innerHTML = '<div class="detail-block"><span class="detail-label">' + esc(t('source')) + '</span><div class="detail-value">' + esc(c.source) + ' · ' + source + '</div></div><div class="detail-block"><span class="detail-label">' + esc(t('created')) + '</span><div class="detail-value">' + date(c.createdAt, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + '</div></div><div class="detail-block"><span class="detail-label">' + esc(t('conversationMessages')) + '</span><div class="detail-value">' + esc(t('chats', { count: visibleMessages.length })) + '</div></div>' + (toolMessages ? '<div class="detail-block"><span class="detail-label">' + esc(t('toolRecords')) + '</span><div class="detail-value">' + esc(t('tools', { count: toolMessages })) + '</div></div>' : '') + '<div class="detail-block"><span class="detail-label">' + esc(t('tags')) + '</span><div class="detail-tags">' + (c.tags.length ? c.tags.map(function (tag) { return '<span class="detail-tag">' + esc(tag) + '</span>'; }).join('') : esc(t('noTags'))) + '</div></div>';
 }
 async function refresh() { S.conversations = (await api('/api/conversations')).conversations; if (S.query) await search(); else S.results = null; renderSide(); renderList(); }
 async function selectConversation(id) { try { S.activeId = id; renderList(); S.current = (await api('/api/conversations/' + encodeURIComponent(id))).conversation; renderReader(); E.app.classList.add('reading'); } catch (error) { toast(error.message, 'error'); } }
 async function patchCurrent(changes, message) { if (!S.current) return; S.current = (await api('/api/conversations/' + encodeURIComponent(S.current.id), { method: 'PATCH', body: JSON.stringify(changes) })).conversation; await refresh(); renderReader(); if (message) toast(message); }
+function editMessage(index) {
+  const message = S.current?.messages?.[index];
+  if (!message) return;
+  S.editingMessage = { conversationId: S.current.id, messageId: message.id };
+  E.messageInput.value = message.content;
+  E.messageDialog.returnValue = 'cancel';
+  E.messageDialog.showModal();
+  setTimeout(function () { E.messageInput.focus(); }, 20);
+}
+async function saveEditedMessage(editing, content) {
+  const scrollTop = E.messages.scrollTop;
+  const result = await api('/api/conversations/' + encodeURIComponent(editing.conversationId) + '/messages/' + encodeURIComponent(editing.messageId), { method: 'PATCH', body: JSON.stringify({ content: content }) });
+  if (S.current?.id === editing.conversationId) {
+    S.current = result.conversation;
+    await refresh();
+    renderReader(scrollTop);
+  }
+  toast(t('messageUpdated'));
+}
 async function search() { if (!S.query.trim()) { S.results = null; renderList(); return; } S.results = (await api('/api/conversations?q=' + encodeURIComponent(S.query.trim()))).conversations; renderList(); }
 function setFilter(filter, tag) { S.filter = filter; S.tag = tag || null; renderSide(); renderList(); E.sidebar.classList.remove('open'); }
 function showMenu(menu, button) { E.moreMenu.hidden = true; E.exportMenu.hidden = true; menu.hidden = false; const r = button.getBoundingClientRect(), w = menu.offsetWidth; menu.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + 'px'; menu.style.top = Math.min(innerHeight - menu.offsetHeight - 8, r.bottom + 5) + 'px'; }
@@ -77,6 +96,7 @@ function bind() {
   E.exportAll.onclick = exportAll; E.favorite.onclick = function () { patchCurrent({ favorite: !S.current.favorite }, S.current.favorite ? t('favoriteRemoved') : t('favoriteAdded')); }; E.export.onclick = function () { showMenu(E.exportMenu, E.export); }; E.more.onclick = function () { showMenu(E.moreMenu, E.more); };
   E.exportMenu.onclick = function (e) { const button = e.target.closest('[data-format]'); if (button) exportCurrent(button.dataset.format); }; E.moreMenu.onclick = async function (e) { const button = e.target.closest('[data-action]'); if (!button || !S.current) return; hideMenus(); if (button.dataset.action === 'rename') dialog({ kicker: t('organizeConversation'), title: t('rename'), label: t('conversationTitle'), value: S.current.title, action: function (value) { return patchCurrent({ title: value }, t('titleUpdated')); } }); if (button.dataset.action === 'tag') dialog({ kicker: t('organizeConversation'), title: t('editTags'), label: t('tags'), value: S.current.tags.join(', '), hint: t('tagsHint'), action: function (value) { return patchCurrent({ tags: value.split(/[,，]/).map(function (x) { return x.trim(); }).filter(Boolean) }, t('tagsUpdated')); } }); if (button.dataset.action === 'archive') await patchCurrent({ archived: !S.current.archived }, S.current.archived ? t('unarchived') : t('archivedDone')); if (button.dataset.action === 'delete') await removeCurrent(); };
   E.textDialog.addEventListener('close', function () { if (E.textDialog.returnValue === 'default' && S.action && E.textInput.value.trim()) Promise.resolve(S.action(E.textInput.value.trim())).catch(function (e) { toast(e.message, 'error'); }); S.action = null; }); $('#text-dialog-form').onsubmit = function (e) { if (e.submitter && e.submitter.value === 'cancel') return; e.preventDefault(); E.textDialog.close('default'); };
+  E.messageDialog.addEventListener('close', function () { const editing = S.editingMessage; S.editingMessage = null; if (E.messageDialog.returnValue === 'default' && editing && E.messageInput.value.trim()) Promise.resolve(saveEditedMessage(editing, E.messageInput.value.trim())).catch(function (e) { toast(e.message, 'error'); }); }); $('#message-dialog-form').onsubmit = function (e) { if (e.submitter && e.submitter.value === 'cancel') return; e.preventDefault(); if (!E.messageInput.value.trim()) { toast(t('messageEmpty'), 'error'); return; } E.messageDialog.close('default'); };
   $('#manage-tags').onclick = function () { if (S.current) dialog({ kicker: t('organizeConversation'), title: t('editTags'), label: t('tags'), value: S.current.tags.join(', '), action: function (value) { return patchCurrent({ tags: value.split(/[,，]/).map(function (x) { return x.trim(); }).filter(Boolean) }, t('tagsUpdated')); } }); };
   E.detailsButton.onclick = function () { E.details.classList.add('open'); E.scrim.hidden = false; }; $('#close-details').onclick = function () { E.details.classList.remove('open'); E.scrim.hidden = true; }; $('#mobile-menu').onclick = function () { E.sidebar.classList.add('open'); E.scrim.hidden = false; }; $('#sidebar-close').onclick = closeSidebar; E.scrim.onclick = function () { E.sidebar.classList.remove('open'); E.details.classList.remove('open'); E.scrim.hidden = true; }; $('#back-to-list').onclick = function () { E.app.classList.remove('reading'); };
   $('#collapse-sidebar').onclick = function () { setPanelCollapsed('sidebar', true); };
@@ -86,7 +106,7 @@ function bind() {
       setPanelCollapsed(button.dataset.panelAction === 'show-sidebar' ? 'sidebar' : 'list', false);
     };
   });
-  E.messages.onscroll = function () { $('#scroll-top').classList.toggle('visible', E.messages.scrollTop > 500); }; $('#scroll-top').onclick = function () { E.messages.scrollTo({ top: 0, behavior: 'smooth' }); }; E.messages.onclick = async function (e) { await handleRichContentClick(e, S.current, toast); }; $('#theme-toggle').onclick = function () { theme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); };
+  E.messages.onscroll = function () { $('#scroll-top').classList.toggle('visible', E.messages.scrollTop > 500); }; $('#scroll-top').onclick = function () { E.messages.scrollTo({ top: 0, behavior: 'smooth' }); }; E.messages.onclick = async function (e) { const editButton = e.target.closest('[data-edit-index]'); if (editButton) { editMessage(Number(editButton.dataset.editIndex)); return; } await handleRichContentClick(e, S.current, toast); }; $('#theme-toggle').onclick = function () { theme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); };
   E.language.onchange = function () {
     setLanguage(E.language.value);
     renderSide();

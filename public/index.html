@@ -179,6 +179,16 @@
       </form>
     </dialog>
 
+    <dialog id="message-dialog" class="modal edit-message-modal">
+      <form method="dialog" class="modal-card" id="message-dialog-form">
+        <header><div><span class="modal-kicker" data-i18n="editMessageKicker">编辑本地记录</span><h2 data-i18n="editMessage">编辑消息</h2></div><button class="icon-btn" value="cancel" aria-label="关闭"><svg><use href="#i-close"></use></svg></button></header>
+        <label class="field-label" for="message-dialog-input" data-i18n="messageContent">消息内容</label>
+        <textarea class="message-textarea" id="message-dialog-input" rows="14" required></textarea>
+        <p class="field-hint" data-i18n="editMessageHint">本地编辑会在后续同步时保留。</p>
+        <footer><button value="cancel" class="secondary-button" data-i18n="cancel">取消</button><button value="default" class="primary-button" data-i18n="save">保存</button></footer>
+      </form>
+    </dialog>
+
     <dialog id="help-dialog" class="modal help-modal">
       <form method="dialog" class="modal-card">
         <header><div><span class="modal-kicker" data-i18n="firstUse">第一次使用</span><h2 data-i18n="bringHome">把所有聊天搬回本地</h2></div><button class="icon-btn" value="cancel" aria-label="关闭"><svg><use href="#i-close"></use></svg></button></header>
