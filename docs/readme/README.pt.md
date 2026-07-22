@@ -18,7 +18,7 @@ Projeto comunitário independente, sem vínculo com a OpenAI.
 - Resultados web, textos longos, chamadas de ferramentas e arquivos gerados recolhidos.
 - Userscript Tampermonkey/Violentmonkey para sincronização incremental selecionada.
 - Pesquisa, favoritos, arquivo, renomear, etiquetas, modo escuro e RTL árabe.
-- Exportação Markdown/JSON e `conversations.json` compatível.
+- Exportação individual em Markdown, JSON, imagem JPG ou PDF paginado; biblioteca completa em `conversations.json`, ZIP Markdown ou ZIP JSON.
 
 ## Início rápido
 

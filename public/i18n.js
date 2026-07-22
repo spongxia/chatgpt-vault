@@ -18,7 +18,7 @@ const translations = {
     expandSidebar: 'Expand navigation',
     collapseList: 'Collapse conversation list',
     expandList: 'Expand conversation list',
-    exportAll: 'Export conversations.json',
+    exportAll: 'Export all conversations',
     searchPlaceholder: 'Search titles or chat content',
     clearSearch: 'Clear search',
     welcomeTitle: 'Your chat history, truly yours',
@@ -132,14 +132,21 @@ const translations = {
     toolOutputCopied: 'Tool output copied',
     messageCopied: 'Message copied', editMessage: 'Edit message', editMessageKicker: 'Edit local record',
     messageContent: 'Message content', editMessageHint: 'Local edits are preserved during later syncs.',
-    messageUpdated: 'Message updated', messageEmpty: 'Message content cannot be empty'
+    messageUpdated: 'Message updated', messageEmpty: 'Message content cannot be empty',
+    batchChatGpt: 'ChatGPT JSON', batchChatGptDesc: 'Official-compatible conversations.json',
+    batchMarkdownZip: 'Markdown ZIP', batchMarkdownZipDesc: 'One Markdown file per conversation',
+    batchJsonZip: 'JSON ZIP', batchJsonZipDesc: 'One Vault JSON file per conversation',
+    jpgDesc: 'A high-resolution long image of the full conversation', pdfDesc: 'A paginated document for printing and sharing',
+    preparingVisualExport: 'Rendering the conversation…', preparingArchive: 'Preparing {format}…',
+    exportArchiveDone: '{format} exported ({count} conversations)', visualExporterUnavailable: 'The visual exporter did not load',
+    exportFailedGeneric: 'Could not create the export file'
   },
   'zh-CN': {
     brandTagline: '你的本地对话库', importChats: '导入聊天记录', allChats: '全部对话', favorites: '收藏', archived: '已归档', tags: '标签',
     tagEmpty: '导入后可给对话添加标签', localOnly: '仅保存在这台电脑', connecting: '正在连接本地服务…', connected: '本地服务已连接',
     connectionFailed: '本地服务连接失败', importHelp: '导入与同步帮助', toggleTheme: '切换外观', language: '语言',
     collapseSidebar: '折叠左栏', expandSidebar: '展开左栏', collapseList: '折叠对话列表', expandList: '展开对话列表',
-    exportAll: '导出 conversations.json', searchPlaceholder: '搜索标题或聊天内容', clearSearch: '清除搜索',
+    exportAll: '导出全部对话', searchPlaceholder: '搜索标题或聊天内容', clearSearch: '清除搜索',
     welcomeTitle: '聊天记录，终于真正属于你', welcomeBody: '批量导入 ChatGPT 数据，在本地搜索、整理和阅读。所有内容都只保存在这台电脑上。',
     startImport: '开始导入', fullTextSearch: '全文搜索', fullTextSearchDesc: '快速找回聊过的内容', organizeTags: '标签整理',
     organizeTagsDesc: '按项目和主题归档', exportAnytime: '随时导出', exportAnytimeDesc: 'Markdown、JSON 或 conversations.json',
@@ -171,7 +178,13 @@ const translations = {
     openLink: '打开引用链接', sources: '来源 · {count}', missingUrl: '原始来源信息未包含网址',
     uploadedInConversation: '会话中的上传文件', externalLink: '外部链接', code: '代码', copy: '复制', codeCopied: '代码已复制',
     toolOutputCopied: '工具输出已复制', messageCopied: '消息已复制', editMessage: '编辑消息', editMessageKicker: '编辑本地记录',
-    messageContent: '消息内容', editMessageHint: '本地编辑会在后续同步时保留。', messageUpdated: '消息已更新', messageEmpty: '消息内容不能为空'
+    messageContent: '消息内容', editMessageHint: '本地编辑会在后续同步时保留。', messageUpdated: '消息已更新', messageEmpty: '消息内容不能为空',
+    batchChatGpt: 'ChatGPT JSON', batchChatGptDesc: '官方兼容的 conversations.json',
+    batchMarkdownZip: 'Markdown ZIP', batchMarkdownZipDesc: '每条对话一个 Markdown 文件',
+    batchJsonZip: 'JSON ZIP', batchJsonZipDesc: '每条对话一个 Vault JSON 文件',
+    jpgDesc: '完整对话的高清长图', pdfDesc: '适合打印和分享的分页文档', preparingVisualExport: '正在渲染完整对话…',
+    preparingArchive: '正在生成 {format}…', exportArchiveDone: '已导出 {format}（{count} 条对话）',
+    visualExporterUnavailable: '视觉导出组件加载失败', exportFailedGeneric: '无法生成导出文件'
   },
   fr: {
     brandTagline: 'Votre bibliothèque de conversations locale', importChats: 'Importer des discussions', allChats: 'Toutes les discussions',
@@ -179,7 +192,7 @@ const translations = {
     localOnly: 'Stocké uniquement sur cet ordinateur', connecting: 'Connexion au service local…', connected: 'Service local connecté',
     connectionFailed: 'Service local indisponible', importHelp: 'Aide importation et synchronisation', toggleTheme: 'Changer l’apparence',
     language: 'Langue', collapseSidebar: 'Réduire la navigation', expandSidebar: 'Déployer la navigation',
-    collapseList: 'Réduire la liste', expandList: 'Déployer la liste', exportAll: 'Exporter conversations.json',
+    collapseList: 'Réduire la liste', expandList: 'Déployer la liste', exportAll: 'Exporter toutes les conversations',
     searchPlaceholder: 'Rechercher dans les titres ou le contenu', clearSearch: 'Effacer la recherche',
     welcomeTitle: 'Votre historique vous appartient vraiment', welcomeBody: 'Importez vos données ChatGPT, puis recherchez, organisez et lisez-les localement.',
     startImport: 'Commencer l’importation', fullTextSearch: 'Recherche plein texte', fullTextSearchDesc: 'Retrouvez tout ce qui a été discuté',
@@ -216,7 +229,11 @@ const translations = {
     missingUrl: 'L’enregistrement d’origine ne contient pas d’URL', uploadedInConversation: 'Importé dans cette conversation',
     externalLink: 'Lien externe', code: 'code', copy: 'Copier', codeCopied: 'Code copié', toolOutputCopied: 'Sortie copiée', messageCopied: 'Message copié',
     editMessage: 'Modifier le message', editMessageKicker: 'Modifier la copie locale', messageContent: 'Contenu du message',
-    editMessageHint: 'Les modifications locales sont conservées lors des synchronisations ultérieures.', messageUpdated: 'Message mis à jour', messageEmpty: 'Le message ne peut pas être vide'
+    editMessageHint: 'Les modifications locales sont conservées lors des synchronisations ultérieures.', messageUpdated: 'Message mis à jour', messageEmpty: 'Le message ne peut pas être vide',
+    batchChatGpt: 'JSON ChatGPT', batchChatGptDesc: 'conversations.json compatible avec le format officiel',
+    batchMarkdownZip: 'ZIP Markdown', batchMarkdownZipDesc: 'Un fichier Markdown par conversation', batchJsonZip: 'ZIP JSON', batchJsonZipDesc: 'Un fichier JSON Vault par conversation',
+    jpgDesc: 'Image longue haute résolution de la conversation', pdfDesc: 'Document paginé pour impression et partage', preparingVisualExport: 'Rendu de la conversation…',
+    preparingArchive: 'Préparation de {format}…', exportArchiveDone: '{format} exporté ({count} conversations)', visualExporterUnavailable: 'Le module d’export visuel n’a pas été chargé', exportFailedGeneric: 'Impossible de créer le fichier exporté'
   },
   es: {
     brandTagline: 'Tu biblioteca local de conversaciones', importChats: 'Importar chats', allChats: 'Todos los chats', favorites: 'Favoritos',
@@ -224,7 +241,7 @@ const translations = {
     connecting: 'Conectando con el servicio local…', connected: 'Servicio local conectado', connectionFailed: 'Servicio local no disponible',
     importHelp: 'Ayuda de importación y sincronización', toggleTheme: 'Cambiar apariencia', language: 'Idioma',
     collapseSidebar: 'Contraer navegación', expandSidebar: 'Expandir navegación', collapseList: 'Contraer lista', expandList: 'Expandir lista',
-    exportAll: 'Exportar conversations.json', searchPlaceholder: 'Buscar títulos o contenido', clearSearch: 'Borrar búsqueda',
+    exportAll: 'Exportar todas las conversaciones', searchPlaceholder: 'Buscar títulos o contenido', clearSearch: 'Borrar búsqueda',
     welcomeTitle: 'Tu historial de chat, realmente tuyo', welcomeBody: 'Importa datos de ChatGPT y búscalos, organízalos y léelos localmente.',
     startImport: 'Empezar a importar', fullTextSearch: 'Búsqueda de texto completo', fullTextSearchDesc: 'Encuentra cualquier conversación',
     organizeTags: 'Organización por etiquetas', organizeTagsDesc: 'Agrupa por proyecto y tema', exportAnytime: 'Exporta cuando quieras',
@@ -261,7 +278,11 @@ const translations = {
     missingUrl: 'El registro original no incluía URL', uploadedInConversation: 'Subido en esta conversación',
     externalLink: 'Enlace externo', code: 'código', copy: 'Copiar', codeCopied: 'Código copiado', toolOutputCopied: 'Salida copiada', messageCopied: 'Mensaje copiado',
     editMessage: 'Editar mensaje', editMessageKicker: 'Editar registro local', messageContent: 'Contenido del mensaje',
-    editMessageHint: 'Los cambios locales se conservan en sincronizaciones posteriores.', messageUpdated: 'Mensaje actualizado', messageEmpty: 'El mensaje no puede estar vacío'
+    editMessageHint: 'Los cambios locales se conservan en sincronizaciones posteriores.', messageUpdated: 'Mensaje actualizado', messageEmpty: 'El mensaje no puede estar vacío',
+    batchChatGpt: 'JSON de ChatGPT', batchChatGptDesc: 'conversations.json compatible con el formato oficial',
+    batchMarkdownZip: 'ZIP Markdown', batchMarkdownZipDesc: 'Un archivo Markdown por conversación', batchJsonZip: 'ZIP JSON', batchJsonZipDesc: 'Un archivo JSON de Vault por conversación',
+    jpgDesc: 'Imagen larga de alta resolución de toda la conversación', pdfDesc: 'Documento paginado para imprimir y compartir', preparingVisualExport: 'Renderizando la conversación…',
+    preparingArchive: 'Preparando {format}…', exportArchiveDone: '{format} exportado ({count} conversaciones)', visualExporterUnavailable: 'No se cargó el exportador visual', exportFailedGeneric: 'No se pudo crear el archivo de exportación'
   },
   ja: {
     brandTagline: 'ローカル会話ライブラリ', importChats: 'チャットをインポート', allChats: 'すべてのチャット', favorites: 'お気に入り',
@@ -269,7 +290,7 @@ const translations = {
     connecting: 'ローカルサービスに接続中…', connected: 'ローカルサービスに接続済み', connectionFailed: 'ローカルサービスに接続できません',
     importHelp: 'インポートと同期のヘルプ', toggleTheme: '外観を切り替え', language: '言語', collapseSidebar: 'ナビゲーションを閉じる',
     expandSidebar: 'ナビゲーションを開く', collapseList: '会話一覧を閉じる', expandList: '会話一覧を開く',
-    exportAll: 'conversations.json を書き出す', searchPlaceholder: 'タイトルまたは会話内容を検索', clearSearch: '検索を消去',
+    exportAll: 'すべての会話を書き出す', searchPlaceholder: 'タイトルまたは会話内容を検索', clearSearch: '検索を消去',
     welcomeTitle: 'チャット履歴を、本当にあなたのものに', welcomeBody: 'ChatGPT データを一括インポートし、ローカルで検索・整理・閲覧できます。',
     startImport: 'インポートを開始', fullTextSearch: '全文検索', fullTextSearchDesc: '過去の会話をすばやく発見',
     organizeTags: 'タグで整理', organizeTagsDesc: 'プロジェクトや話題ごとに分類', exportAnytime: 'いつでも書き出し',
@@ -306,7 +327,11 @@ const translations = {
     sources: '出典 · {count}', missingUrl: '元の記録に URL がありません', uploadedInConversation: 'この会話のアップロード',
     externalLink: '外部リンク', code: 'コード', copy: 'コピー', codeCopied: 'コードをコピーしました',
     toolOutputCopied: 'ツール出力をコピーしました', messageCopied: 'メッセージをコピーしました', editMessage: 'メッセージを編集', editMessageKicker: 'ローカル記録を編集',
-    messageContent: 'メッセージ内容', editMessageHint: 'ローカルの編集内容は後の同期でも保持されます。', messageUpdated: 'メッセージを更新しました', messageEmpty: 'メッセージ内容を入力してください'
+    messageContent: 'メッセージ内容', editMessageHint: 'ローカルの編集内容は後の同期でも保持されます。', messageUpdated: 'メッセージを更新しました', messageEmpty: 'メッセージ内容を入力してください',
+    batchChatGpt: 'ChatGPT JSON', batchChatGptDesc: '公式互換の conversations.json', batchMarkdownZip: 'Markdown ZIP', batchMarkdownZipDesc: '会話ごとに 1 つの Markdown ファイル',
+    batchJsonZip: 'JSON ZIP', batchJsonZipDesc: '会話ごとに 1 つの Vault JSON ファイル', jpgDesc: '会話全体の高解像度ロング画像', pdfDesc: '印刷・共有向けのページ分割文書',
+    preparingVisualExport: '会話をレンダリングしています…', preparingArchive: '{format} を準備しています…', exportArchiveDone: '{format} を書き出しました（{count} 件）',
+    visualExporterUnavailable: '画像書き出し機能を読み込めませんでした', exportFailedGeneric: '書き出しファイルを作成できませんでした'
   },
   ar: {
     brandTagline: 'مكتبة محادثاتك المحلية', importChats: 'استيراد المحادثات', allChats: 'كل المحادثات', favorites: 'المفضلة',
@@ -314,7 +339,7 @@ const translations = {
     connecting: 'جارٍ الاتصال بالخدمة المحلية…', connected: 'تم الاتصال بالخدمة المحلية', connectionFailed: 'الخدمة المحلية غير متاحة',
     importHelp: 'مساعدة الاستيراد والمزامنة', toggleTheme: 'تبديل المظهر', language: 'اللغة', collapseSidebar: 'طي التنقل',
     expandSidebar: 'توسيع التنقل', collapseList: 'طي قائمة المحادثات', expandList: 'توسيع قائمة المحادثات',
-    exportAll: 'تصدير conversations.json', searchPlaceholder: 'البحث في العناوين أو المحتوى', clearSearch: 'مسح البحث',
+    exportAll: 'تصدير كل المحادثات', searchPlaceholder: 'البحث في العناوين أو المحتوى', clearSearch: 'مسح البحث',
     welcomeTitle: 'سجل محادثاتك ملكك حقاً', welcomeBody: 'استورد بيانات ChatGPT وابحث فيها ونظّمها واقرأها محلياً. تبقى بياناتك على هذا الجهاز.',
     startImport: 'بدء الاستيراد', fullTextSearch: 'بحث كامل النص', fullTextSearchDesc: 'اعثر على أي موضوع ناقشته',
     organizeTags: 'تنظيم بالوسوم', organizeTagsDesc: 'رتّب حسب المشروع والموضوع', exportAnytime: 'صدّر في أي وقت',
@@ -350,7 +375,11 @@ const translations = {
     uploadedInConversation: 'مرفوع في هذه المحادثة', externalLink: 'رابط خارجي', code: 'كود', copy: 'نسخ',
     codeCopied: 'تم نسخ الكود', toolOutputCopied: 'تم نسخ مخرجات الأداة', messageCopied: 'تم نسخ الرسالة',
     editMessage: 'تعديل الرسالة', editMessageKicker: 'تعديل السجل المحلي', messageContent: 'محتوى الرسالة',
-    editMessageHint: 'تُحفظ التعديلات المحلية عند المزامنة لاحقًا.', messageUpdated: 'تم تحديث الرسالة', messageEmpty: 'لا يمكن أن تكون الرسالة فارغة'
+    editMessageHint: 'تُحفظ التعديلات المحلية عند المزامنة لاحقًا.', messageUpdated: 'تم تحديث الرسالة', messageEmpty: 'لا يمكن أن تكون الرسالة فارغة',
+    batchChatGpt: 'JSON لـ ChatGPT', batchChatGptDesc: 'ملف conversations.json متوافق رسميًا', batchMarkdownZip: 'Markdown ZIP', batchMarkdownZipDesc: 'ملف Markdown لكل محادثة',
+    batchJsonZip: 'JSON ZIP', batchJsonZipDesc: 'ملف Vault JSON لكل محادثة', jpgDesc: 'صورة طويلة عالية الدقة للمحادثة كاملة', pdfDesc: 'مستند مقسم إلى صفحات للطباعة والمشاركة',
+    preparingVisualExport: 'جارٍ عرض المحادثة…', preparingArchive: 'جارٍ إعداد {format}…', exportArchiveDone: 'تم تصدير {format} ({count} محادثة)',
+    visualExporterUnavailable: 'تعذر تحميل أداة التصدير المرئي', exportFailedGeneric: 'تعذر إنشاء ملف التصدير'
   },
   de: {
     brandTagline: 'Deine lokale Gesprächsbibliothek', importChats: 'Chats importieren', allChats: 'Alle Chats', favorites: 'Favoriten',
@@ -358,7 +387,7 @@ const translations = {
     connecting: 'Verbindung zum lokalen Dienst…', connected: 'Lokaler Dienst verbunden', connectionFailed: 'Lokaler Dienst nicht verfügbar',
     importHelp: 'Import- und Synchronisierungshilfe', toggleTheme: 'Darstellung wechseln', language: 'Sprache',
     collapseSidebar: 'Navigation einklappen', expandSidebar: 'Navigation ausklappen', collapseList: 'Chatliste einklappen',
-    expandList: 'Chatliste ausklappen', exportAll: 'conversations.json exportieren', searchPlaceholder: 'Titel oder Chatinhalt durchsuchen',
+    expandList: 'Chatliste ausklappen', exportAll: 'Alle Gespräche exportieren', searchPlaceholder: 'Titel oder Chatinhalt durchsuchen',
     clearSearch: 'Suche löschen', welcomeTitle: 'Dein Chatverlauf gehört wirklich dir',
     welcomeBody: 'Importiere ChatGPT-Daten und durchsuche, ordne und lies sie lokal. Deine Daten bleiben auf diesem Gerät.',
     startImport: 'Import starten', fullTextSearch: 'Volltextsuche', fullTextSearchDesc: 'Finde jedes besprochene Thema',
@@ -396,7 +425,11 @@ const translations = {
     sources: 'Quellen · {count}', missingUrl: 'Der Originaldatensatz enthält keine URL', uploadedInConversation: 'In diesem Gespräch hochgeladen',
     externalLink: 'Externer Link', code: 'Code', copy: 'Kopieren', codeCopied: 'Code kopiert',
     toolOutputCopied: 'Werkzeugausgabe kopiert', messageCopied: 'Nachricht kopiert', editMessage: 'Nachricht bearbeiten', editMessageKicker: 'Lokalen Eintrag bearbeiten',
-    messageContent: 'Nachrichteninhalt', editMessageHint: 'Lokale Änderungen bleiben bei späteren Synchronisierungen erhalten.', messageUpdated: 'Nachricht aktualisiert', messageEmpty: 'Die Nachricht darf nicht leer sein'
+    messageContent: 'Nachrichteninhalt', editMessageHint: 'Lokale Änderungen bleiben bei späteren Synchronisierungen erhalten.', messageUpdated: 'Nachricht aktualisiert', messageEmpty: 'Die Nachricht darf nicht leer sein',
+    batchChatGpt: 'ChatGPT JSON', batchChatGptDesc: 'Offiziell kompatible conversations.json', batchMarkdownZip: 'Markdown ZIP', batchMarkdownZipDesc: 'Eine Markdown-Datei pro Gespräch',
+    batchJsonZip: 'JSON ZIP', batchJsonZipDesc: 'Eine Vault-JSON-Datei pro Gespräch', jpgDesc: 'Hochauflösendes Langbild des gesamten Gesprächs', pdfDesc: 'Seitendokument zum Drucken und Teilen',
+    preparingVisualExport: 'Gespräch wird gerendert…', preparingArchive: '{format} wird vorbereitet…', exportArchiveDone: '{format} exportiert ({count} Gespräche)',
+    visualExporterUnavailable: 'Der visuelle Exporter wurde nicht geladen', exportFailedGeneric: 'Exportdatei konnte nicht erstellt werden'
   },
   it: {
     brandTagline: 'La tua libreria locale di conversazioni', importChats: 'Importa chat', allChats: 'Tutte le chat', favorites: 'Preferiti',
@@ -404,7 +437,7 @@ const translations = {
     connecting: 'Connessione al servizio locale…', connected: 'Servizio locale connesso', connectionFailed: 'Servizio locale non disponibile',
     importHelp: 'Aiuto importazione e sincronizzazione', toggleTheme: 'Cambia aspetto', language: 'Lingua',
     collapseSidebar: 'Comprimi navigazione', expandSidebar: 'Espandi navigazione', collapseList: 'Comprimi elenco', expandList: 'Espandi elenco',
-    exportAll: 'Esporta conversations.json', searchPlaceholder: 'Cerca titoli o contenuto', clearSearch: 'Cancella ricerca',
+    exportAll: 'Esporta tutte le conversazioni', searchPlaceholder: 'Cerca titoli o contenuto', clearSearch: 'Cancella ricerca',
     welcomeTitle: 'La cronologia delle chat è davvero tua', welcomeBody: 'Importa i dati ChatGPT e cercali, organizzali e leggili in locale.',
     startImport: 'Avvia importazione', fullTextSearch: 'Ricerca nel testo', fullTextSearchDesc: 'Ritrova tutto ciò di cui hai parlato',
     organizeTags: 'Organizza con etichette', organizeTagsDesc: 'Raggruppa per progetto e argomento', exportAnytime: 'Esporta quando vuoi',
@@ -441,7 +474,11 @@ const translations = {
     sources: 'Fonti · {count}', missingUrl: 'Il record originale non contiene URL', uploadedInConversation: 'Caricato in questa conversazione',
     externalLink: 'Link esterno', code: 'codice', copy: 'Copia', codeCopied: 'Codice copiato',
     toolOutputCopied: 'Output copiato', messageCopied: 'Messaggio copiato', editMessage: 'Modifica messaggio', editMessageKicker: 'Modifica record locale',
-    messageContent: 'Contenuto del messaggio', editMessageHint: 'Le modifiche locali vengono mantenute nelle sincronizzazioni successive.', messageUpdated: 'Messaggio aggiornato', messageEmpty: 'Il messaggio non può essere vuoto'
+    messageContent: 'Contenuto del messaggio', editMessageHint: 'Le modifiche locali vengono mantenute nelle sincronizzazioni successive.', messageUpdated: 'Messaggio aggiornato', messageEmpty: 'Il messaggio non può essere vuoto',
+    batchChatGpt: 'JSON ChatGPT', batchChatGptDesc: 'conversations.json compatibile con il formato ufficiale', batchMarkdownZip: 'ZIP Markdown', batchMarkdownZipDesc: 'Un file Markdown per conversazione',
+    batchJsonZip: 'ZIP JSON', batchJsonZipDesc: 'Un file JSON Vault per conversazione', jpgDesc: 'Immagine lunga ad alta risoluzione dell’intera conversazione', pdfDesc: 'Documento impaginato per stampa e condivisione',
+    preparingVisualExport: 'Rendering della conversazione…', preparingArchive: 'Preparazione di {format}…', exportArchiveDone: '{format} esportato ({count} conversazioni)',
+    visualExporterUnavailable: 'L’esportatore visivo non è stato caricato', exportFailedGeneric: 'Impossibile creare il file di esportazione'
   },
   pt: {
     brandTagline: 'Sua biblioteca local de conversas', importChats: 'Importar conversas', allChats: 'Todas as conversas', favorites: 'Favoritas',
@@ -449,7 +486,7 @@ const translations = {
     connecting: 'Conectando ao serviço local…', connected: 'Serviço local conectado', connectionFailed: 'Serviço local indisponível',
     importHelp: 'Ajuda de importação e sincronização', toggleTheme: 'Alternar aparência', language: 'Idioma',
     collapseSidebar: 'Recolher navegação', expandSidebar: 'Expandir navegação', collapseList: 'Recolher lista', expandList: 'Expandir lista',
-    exportAll: 'Exportar conversations.json', searchPlaceholder: 'Pesquisar títulos ou conteúdo', clearSearch: 'Limpar pesquisa',
+    exportAll: 'Exportar todas as conversas', searchPlaceholder: 'Pesquisar títulos ou conteúdo', clearSearch: 'Limpar pesquisa',
     welcomeTitle: 'Seu histórico de chat é realmente seu', welcomeBody: 'Importe dados do ChatGPT e pesquise, organize e leia tudo localmente.',
     startImport: 'Começar importação', fullTextSearch: 'Pesquisa em texto completo', fullTextSearchDesc: 'Encontre qualquer assunto conversado',
     organizeTags: 'Organização por etiquetas', organizeTagsDesc: 'Agrupe por projeto e assunto', exportAnytime: 'Exporte quando quiser',
@@ -487,7 +524,11 @@ const translations = {
     sources: 'Fontes · {count}', missingUrl: 'O registro original não contém URL', uploadedInConversation: 'Enviado nesta conversa',
     externalLink: 'Link externo', code: 'código', copy: 'Copiar', codeCopied: 'Código copiado',
     toolOutputCopied: 'Saída copiada', messageCopied: 'Mensagem copiada', editMessage: 'Editar mensagem', editMessageKicker: 'Editar registro local',
-    messageContent: 'Conteúdo da mensagem', editMessageHint: 'As edições locais são preservadas nas sincronizações futuras.', messageUpdated: 'Mensagem atualizada', messageEmpty: 'A mensagem não pode estar vazia'
+    messageContent: 'Conteúdo da mensagem', editMessageHint: 'As edições locais são preservadas nas sincronizações futuras.', messageUpdated: 'Mensagem atualizada', messageEmpty: 'A mensagem não pode estar vazia',
+    batchChatGpt: 'JSON do ChatGPT', batchChatGptDesc: 'conversations.json compatível com o formato oficial', batchMarkdownZip: 'ZIP Markdown', batchMarkdownZipDesc: 'Um arquivo Markdown por conversa',
+    batchJsonZip: 'ZIP JSON', batchJsonZipDesc: 'Um arquivo JSON do Vault por conversa', jpgDesc: 'Imagem longa em alta resolução da conversa completa', pdfDesc: 'Documento paginado para impressão e compartilhamento',
+    preparingVisualExport: 'Renderizando a conversa…', preparingArchive: 'Preparando {format}…', exportArchiveDone: '{format} exportado ({count} conversas)',
+    visualExporterUnavailable: 'O exportador visual não foi carregado', exportFailedGeneric: 'Não foi possível criar o arquivo de exportação'
   }
 };
 

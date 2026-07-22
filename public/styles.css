@@ -388,6 +388,36 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 .export-menu { width: 230px; }
 .export-menu > button { padding: 9px; }
 
+.conversation-export-surface {
+  --surface: #fff;
+  --surface-2: #f3f6f3;
+  --ink: #202620;
+  --muted: #626b64;
+  --faint: #8b948d;
+  --line: #dde3de;
+  --accent: #27846f;
+  --accent-ink: #1e6f5e;
+  --accent-soft: #e6f3ef;
+  position: absolute;
+  z-index: -100;
+  top: 0;
+  left: -100000px;
+  width: 900px;
+  min-height: 1px;
+  padding: 48px 0;
+  color: var(--ink);
+  background: #fff;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.conversation-export-header { width: 820px; margin: 0 auto 22px; padding: 0 32px 24px; border-bottom: 1px solid var(--line); }
+.conversation-export-header span { color: var(--accent-ink); font-size: 10px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+.conversation-export-header h1 { margin: 9px 0 8px; font: 700 28px/1.3 Georgia, "Songti SC", serif; overflow-wrap: anywhere; }
+.conversation-export-header p { margin: 0; color: var(--muted); font-size: 10px; }
+.conversation-export-surface .message { width: 820px; }
+.conversation-export-surface .message-head button { display: none; }
+.conversation-export-surface .message-head time { margin-left: auto; }
+.conversation-export-surface .tool-card { width: 784px; }
+
 .toast-region { position: fixed; z-index: 60; right: 18px; bottom: 18px; display: flex; align-items: flex-end; flex-direction: column; gap: 8px; pointer-events: none; }
 .toast { display: flex; align-items: center; gap: 9px; max-width: 360px; padding: 10px 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 9px; box-shadow: var(--shadow); font-size: 10px; animation: toast-in .2s ease-out; }
 .toast::before { content: ""; width: 7px; height: 7px; background: var(--accent); border-radius: 50%; }

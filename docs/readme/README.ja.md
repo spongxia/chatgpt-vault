@@ -18,7 +18,7 @@ OpenAI とは無関係の独立コミュニティプロジェクトです。
 - Web 検索、長いテキスト、ツール呼び出し、生成ファイルを自動折りたたみ。
 - Tampermonkey/Violentmonkey 用の選択同期 userscript。
 - 検索、お気に入り、アーカイブ、名前変更、タグ、ダークモード、アラビア語 RTL。
-- Markdown/JSON と公式互換 `conversations.json` の書き出し。
+- 会話ごとの Markdown、JSON、JPG ロング画像、ページ分割 PDF、および全会話の `conversations.json`、Markdown ZIP、JSON ZIP 書き出し。
 
 ## クイックスタート
 

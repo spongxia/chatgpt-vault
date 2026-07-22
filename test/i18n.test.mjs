@@ -24,5 +24,8 @@ test('each language provides translated core and renderer labels', () => {
     assert.notEqual(t('sources', { count: 3 }), 'sources');
     assert.notEqual(t('editMessage'), 'editMessage');
     assert.notEqual(t('messageUpdated'), 'messageUpdated');
+    assert.notEqual(t('batchMarkdownZip'), 'batchMarkdownZip');
+    assert.notEqual(t('jpgDesc'), 'jpgDesc');
+    assert.notEqual(t('pdfDesc'), 'pdfDesc');
   }
 });
