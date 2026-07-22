@@ -138,8 +138,8 @@ const translations = {
     batchJsonZip: 'JSON ZIP', batchJsonZipDesc: 'One Vault JSON file per conversation',
     jpgDesc: 'A high-resolution long image of the full conversation', pdfDesc: 'A paginated document for printing and sharing',
     preparingVisualExport: 'Rendering the conversation…', preparingArchive: 'Preparing {format}…',
-    exportArchiveDone: '{format} exported ({count} conversations)', visualExporterUnavailable: 'The visual exporter did not load',
-    exportFailedGeneric: 'Could not create the export file'
+    exportArchiveDone: '{format} exported ({count} conversations)', visualExporterUnavailable: 'The visual exporter did not load. Relaunch ChatGPT Vault and try again.',
+    serverRestartRequired: 'The local service is still an older version. Relaunch ChatGPT Vault and try again.', exportFailedGeneric: 'Could not create the export file'
   },
   'zh-CN': {
     brandTagline: '你的本地对话库', importChats: '导入聊天记录', allChats: '全部对话', favorites: '收藏', archived: '已归档', tags: '标签',
@@ -184,7 +184,8 @@ const translations = {
     batchJsonZip: 'JSON ZIP', batchJsonZipDesc: '每条对话一个 Vault JSON 文件',
     jpgDesc: '完整对话的高清长图', pdfDesc: '适合打印和分享的分页文档', preparingVisualExport: '正在渲染完整对话…',
     preparingArchive: '正在生成 {format}…', exportArchiveDone: '已导出 {format}（{count} 条对话）',
-    visualExporterUnavailable: '视觉导出组件加载失败', exportFailedGeneric: '无法生成导出文件'
+    visualExporterUnavailable: '视觉导出组件加载失败，请重新启动 ChatGPT Vault 后再试',
+    serverRestartRequired: '本地服务仍是旧版本，请重新启动 ChatGPT Vault 后再试', exportFailedGeneric: '无法生成导出文件'
   },
   fr: {
     brandTagline: 'Votre bibliothèque de conversations locale', importChats: 'Importer des discussions', allChats: 'Toutes les discussions',
@@ -233,7 +234,7 @@ const translations = {
     batchChatGpt: 'JSON ChatGPT', batchChatGptDesc: 'conversations.json compatible avec le format officiel',
     batchMarkdownZip: 'ZIP Markdown', batchMarkdownZipDesc: 'Un fichier Markdown par conversation', batchJsonZip: 'ZIP JSON', batchJsonZipDesc: 'Un fichier JSON Vault par conversation',
     jpgDesc: 'Image longue haute résolution de la conversation', pdfDesc: 'Document paginé pour impression et partage', preparingVisualExport: 'Rendu de la conversation…',
-    preparingArchive: 'Préparation de {format}…', exportArchiveDone: '{format} exporté ({count} conversations)', visualExporterUnavailable: 'Le module d’export visuel n’a pas été chargé', exportFailedGeneric: 'Impossible de créer le fichier exporté'
+    preparingArchive: 'Préparation de {format}…', exportArchiveDone: '{format} exporté ({count} conversations)', visualExporterUnavailable: 'Le module d’export visuel n’a pas été chargé. Relancez ChatGPT Vault.', serverRestartRequired: 'Le service local utilise encore une ancienne version. Relancez ChatGPT Vault.', exportFailedGeneric: 'Impossible de créer le fichier exporté'
   },
   es: {
     brandTagline: 'Tu biblioteca local de conversaciones', importChats: 'Importar chats', allChats: 'Todos los chats', favorites: 'Favoritos',
@@ -282,7 +283,7 @@ const translations = {
     batchChatGpt: 'JSON de ChatGPT', batchChatGptDesc: 'conversations.json compatible con el formato oficial',
     batchMarkdownZip: 'ZIP Markdown', batchMarkdownZipDesc: 'Un archivo Markdown por conversación', batchJsonZip: 'ZIP JSON', batchJsonZipDesc: 'Un archivo JSON de Vault por conversación',
     jpgDesc: 'Imagen larga de alta resolución de toda la conversación', pdfDesc: 'Documento paginado para imprimir y compartir', preparingVisualExport: 'Renderizando la conversación…',
-    preparingArchive: 'Preparando {format}…', exportArchiveDone: '{format} exportado ({count} conversaciones)', visualExporterUnavailable: 'No se cargó el exportador visual', exportFailedGeneric: 'No se pudo crear el archivo de exportación'
+    preparingArchive: 'Preparando {format}…', exportArchiveDone: '{format} exportado ({count} conversaciones)', visualExporterUnavailable: 'No se cargó el exportador visual. Reinicia ChatGPT Vault.', serverRestartRequired: 'El servicio local sigue usando una versión anterior. Reinicia ChatGPT Vault.', exportFailedGeneric: 'No se pudo crear el archivo de exportación'
   },
   ja: {
     brandTagline: 'ローカル会話ライブラリ', importChats: 'チャットをインポート', allChats: 'すべてのチャット', favorites: 'お気に入り',
@@ -331,7 +332,7 @@ const translations = {
     batchChatGpt: 'ChatGPT JSON', batchChatGptDesc: '公式互換の conversations.json', batchMarkdownZip: 'Markdown ZIP', batchMarkdownZipDesc: '会話ごとに 1 つの Markdown ファイル',
     batchJsonZip: 'JSON ZIP', batchJsonZipDesc: '会話ごとに 1 つの Vault JSON ファイル', jpgDesc: '会話全体の高解像度ロング画像', pdfDesc: '印刷・共有向けのページ分割文書',
     preparingVisualExport: '会話をレンダリングしています…', preparingArchive: '{format} を準備しています…', exportArchiveDone: '{format} を書き出しました（{count} 件）',
-    visualExporterUnavailable: '画像書き出し機能を読み込めませんでした', exportFailedGeneric: '書き出しファイルを作成できませんでした'
+    visualExporterUnavailable: '画像書き出し機能を読み込めませんでした。ChatGPT Vault を再起動してください', serverRestartRequired: 'ローカルサービスが旧バージョンのままです。ChatGPT Vault を再起動してください', exportFailedGeneric: '書き出しファイルを作成できませんでした'
   },
   ar: {
     brandTagline: 'مكتبة محادثاتك المحلية', importChats: 'استيراد المحادثات', allChats: 'كل المحادثات', favorites: 'المفضلة',
@@ -379,7 +380,7 @@ const translations = {
     batchChatGpt: 'JSON لـ ChatGPT', batchChatGptDesc: 'ملف conversations.json متوافق رسميًا', batchMarkdownZip: 'Markdown ZIP', batchMarkdownZipDesc: 'ملف Markdown لكل محادثة',
     batchJsonZip: 'JSON ZIP', batchJsonZipDesc: 'ملف Vault JSON لكل محادثة', jpgDesc: 'صورة طويلة عالية الدقة للمحادثة كاملة', pdfDesc: 'مستند مقسم إلى صفحات للطباعة والمشاركة',
     preparingVisualExport: 'جارٍ عرض المحادثة…', preparingArchive: 'جارٍ إعداد {format}…', exportArchiveDone: 'تم تصدير {format} ({count} محادثة)',
-    visualExporterUnavailable: 'تعذر تحميل أداة التصدير المرئي', exportFailedGeneric: 'تعذر إنشاء ملف التصدير'
+    visualExporterUnavailable: 'تعذر تحميل أداة التصدير المرئي. أعد تشغيل ChatGPT Vault.', serverRestartRequired: 'لا تزال الخدمة المحلية تستخدم إصدارًا أقدم. أعد تشغيل ChatGPT Vault.', exportFailedGeneric: 'تعذر إنشاء ملف التصدير'
   },
   de: {
     brandTagline: 'Deine lokale Gesprächsbibliothek', importChats: 'Chats importieren', allChats: 'Alle Chats', favorites: 'Favoriten',
@@ -429,7 +430,7 @@ const translations = {
     batchChatGpt: 'ChatGPT JSON', batchChatGptDesc: 'Offiziell kompatible conversations.json', batchMarkdownZip: 'Markdown ZIP', batchMarkdownZipDesc: 'Eine Markdown-Datei pro Gespräch',
     batchJsonZip: 'JSON ZIP', batchJsonZipDesc: 'Eine Vault-JSON-Datei pro Gespräch', jpgDesc: 'Hochauflösendes Langbild des gesamten Gesprächs', pdfDesc: 'Seitendokument zum Drucken und Teilen',
     preparingVisualExport: 'Gespräch wird gerendert…', preparingArchive: '{format} wird vorbereitet…', exportArchiveDone: '{format} exportiert ({count} Gespräche)',
-    visualExporterUnavailable: 'Der visuelle Exporter wurde nicht geladen', exportFailedGeneric: 'Exportdatei konnte nicht erstellt werden'
+    visualExporterUnavailable: 'Der visuelle Exporter wurde nicht geladen. Starten Sie ChatGPT Vault neu.', serverRestartRequired: 'Der lokale Dienst verwendet noch eine ältere Version. Starten Sie ChatGPT Vault neu.', exportFailedGeneric: 'Exportdatei konnte nicht erstellt werden'
   },
   it: {
     brandTagline: 'La tua libreria locale di conversazioni', importChats: 'Importa chat', allChats: 'Tutte le chat', favorites: 'Preferiti',
@@ -478,7 +479,7 @@ const translations = {
     batchChatGpt: 'JSON ChatGPT', batchChatGptDesc: 'conversations.json compatibile con il formato ufficiale', batchMarkdownZip: 'ZIP Markdown', batchMarkdownZipDesc: 'Un file Markdown per conversazione',
     batchJsonZip: 'ZIP JSON', batchJsonZipDesc: 'Un file JSON Vault per conversazione', jpgDesc: 'Immagine lunga ad alta risoluzione dell’intera conversazione', pdfDesc: 'Documento impaginato per stampa e condivisione',
     preparingVisualExport: 'Rendering della conversazione…', preparingArchive: 'Preparazione di {format}…', exportArchiveDone: '{format} esportato ({count} conversazioni)',
-    visualExporterUnavailable: 'L’esportatore visivo non è stato caricato', exportFailedGeneric: 'Impossibile creare il file di esportazione'
+    visualExporterUnavailable: 'L’esportatore visivo non è stato caricato. Riavvia ChatGPT Vault.', serverRestartRequired: 'Il servizio locale usa ancora una versione precedente. Riavvia ChatGPT Vault.', exportFailedGeneric: 'Impossibile creare il file di esportazione'
   },
   pt: {
     brandTagline: 'Sua biblioteca local de conversas', importChats: 'Importar conversas', allChats: 'Todas as conversas', favorites: 'Favoritas',
@@ -528,7 +529,7 @@ const translations = {
     batchChatGpt: 'JSON do ChatGPT', batchChatGptDesc: 'conversations.json compatível com o formato oficial', batchMarkdownZip: 'ZIP Markdown', batchMarkdownZipDesc: 'Um arquivo Markdown por conversa',
     batchJsonZip: 'ZIP JSON', batchJsonZipDesc: 'Um arquivo JSON do Vault por conversa', jpgDesc: 'Imagem longa em alta resolução da conversa completa', pdfDesc: 'Documento paginado para impressão e compartilhamento',
     preparingVisualExport: 'Renderizando a conversa…', preparingArchive: 'Preparando {format}…', exportArchiveDone: '{format} exportado ({count} conversas)',
-    visualExporterUnavailable: 'O exportador visual não foi carregado', exportFailedGeneric: 'Não foi possível criar o arquivo de exportação'
+    visualExporterUnavailable: 'O exportador visual não foi carregado. Reinicie o ChatGPT Vault.', serverRestartRequired: 'O serviço local ainda está em uma versão anterior. Reinicie o ChatGPT Vault.', exportFailedGeneric: 'Não foi possível criar o arquivo de exportação'
   }
 };
 

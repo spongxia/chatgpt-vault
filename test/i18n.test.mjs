@@ -27,5 +27,6 @@ test('each language provides translated core and renderer labels', () => {
     assert.notEqual(t('batchMarkdownZip'), 'batchMarkdownZip');
     assert.notEqual(t('jpgDesc'), 'jpgDesc');
     assert.notEqual(t('pdfDesc'), 'pdfDesc');
+    assert.notEqual(t('serverRestartRequired'), 'serverRestartRequired');
   }
 });

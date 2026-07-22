@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { readFileSync } from 'node:fs';
 import { mkdir, readFile, readdir, rename, unlink, writeFile } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -12,6 +13,8 @@ import {
 import { createConversationArchive } from './lib/zip.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)));
+const APP_VERSION = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version;
+const API_VERSION = 2;
 const PUBLIC_DIR = join(ROOT, 'public');
 const SCRIPT_DIR = join(ROOT, 'scripts');
 const KATEX_DIR = join(ROOT, 'node_modules', 'katex', 'dist');
@@ -34,6 +37,15 @@ const MIME_TYPES = {
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.user.js': 'text/javascript; charset=utf-8'
 };
+
+export function healthPayload() {
+  return {
+    ok: true,
+    version: APP_VERSION,
+    apiVersion: API_VERSION,
+    dataDirectory: DATA_DIR
+  };
+}
 
 function json(response, status, payload, headers = {}) {
   response.writeHead(status, {
@@ -253,7 +265,7 @@ export function createChatGptVaultServer() {
       }
 
       if (request.method === 'GET' && url.pathname === '/api/health') {
-        return json(response, 200, { ok: true, version: '1.0.0', dataDirectory: DATA_DIR }, cors);
+        return json(response, 200, healthPayload(), cors);
       }
 
       if (request.method === 'GET' && url.pathname === '/api/conversations') {

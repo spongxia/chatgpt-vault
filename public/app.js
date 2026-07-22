@@ -73,7 +73,18 @@ function zipEnd(view) { for (let i = view.byteLength - 22; i >= Math.max(0, view
 async function zipJson(file) { const buffer = await file.arrayBuffer(), view = new DataView(buffer), end = zipEnd(view); if (end < 0) throw new Error(t('invalidZip')); const decoder = new TextDecoder(), total = view.getUint16(end + 10, true); let cursor = view.getUint32(end + 16, true); for (let i = 0; i < total; i++) { if (view.getUint32(cursor, true) !== 0x02014b50) break; const method = view.getUint16(cursor + 10, true), size = view.getUint32(cursor + 20, true), nameLength = view.getUint16(cursor + 28, true), extraLength = view.getUint16(cursor + 30, true), commentLength = view.getUint16(cursor + 32, true), local = view.getUint32(cursor + 42, true), name = decoder.decode(new Uint8Array(buffer, cursor + 46, nameLength)); cursor += 46 + nameLength + extraLength + commentLength; if (!/(^|\/)conversations\.json$/i.test(name)) continue; const start = local + 30 + view.getUint16(local + 26, true) + view.getUint16(local + 28, true), compressed = new Uint8Array(buffer, start, size); let data = compressed; if (method === 8) data = new Uint8Array(await new Response(new Blob([compressed]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer()); if (method !== 0 && method !== 8) throw new Error(t('unsupportedZip')); return decoder.decode(data); } throw new Error(t('conversationsMissing')); }
 async function parseFiles(files) { const items = []; for (const file of files) { const ext = file.name.split('.').pop().toLowerCase(); if (ext === 'zip') { const raw = JSON.parse(await zipJson(file)); items.push(...(Array.isArray(raw) ? raw : raw.conversations || [raw])); } else if (ext === 'json') { const raw = JSON.parse(await file.text()); items.push(...(Array.isArray(raw) ? raw : raw.conversations || [raw])); } else if (ext === 'md' || ext === 'markdown') items.push(await markdownFile(await file.text(), file.name)); else throw new Error(t('unsupportedFile', { name: file.name })); } return items; }
 async function importFiles(files) { if (!files || !files.length) return; E.progress.hidden = false; try { const items = await parseFiles([...files]); if (!items.length) throw new Error(t('noImportable')); let totals = { imported: 0, updated: 0 }; for (let i = 0; i < items.length; i += 40) { const result = await api('/api/conversations/import', { method: 'POST', body: JSON.stringify({ conversations: items.slice(i, i + 40) }) }); totals.imported += result.imported; totals.updated += result.updated; E.progress.querySelector('p').textContent = t('processed', { done: Math.min(i + 40, items.length), total: items.length }); } E.importDialog.close(); await refresh(); toast(t('importComplete', totals)); } catch (error) { toast(t('importFailed', { message: error.message }), 'error'); } finally { E.progress.hidden = true; E.progress.querySelector('p').textContent = t('processing'); E.files.value = ''; } }
-async function apiBlob(path) { const response = await fetch(path, { headers: { 'X-ChatGPT-Vault': '1' } }); if (!response.ok) { const data = await response.json().catch(function () { return {}; }); throw new Error(data.error || t('requestFailed')); } return response.blob(); }
+async function apiBlob(path, expectedType) {
+  const response = await fetch(path, { headers: { 'X-ChatGPT-Vault': '1' } });
+  if (!response.ok) {
+    const data = await response.json().catch(function () { return {}; });
+    throw new Error(data.error || t('requestFailed'));
+  }
+  const contentType = response.headers.get('content-type') || '';
+  if (expectedType && !contentType.toLowerCase().includes(expectedType.toLowerCase())) {
+    throw new Error(t('serverRestartRequired'));
+  }
+  return response.blob();
+}
 async function exportCurrent(format) {
   if (!S.current) return;
   hideMenus();
@@ -108,7 +119,7 @@ async function exportAll(format) {
     }
     const label = format === 'markdown' ? 'Markdown ZIP' : 'JSON ZIP';
     toast(t('preparingArchive', { format: label }));
-    const blob = await apiBlob('/api/conversations/export?format=' + encodeURIComponent(format));
+    const blob = await apiBlob('/api/conversations/export?format=' + encodeURIComponent(format), 'application/zip');
     downloadBlob(blob, `chatgpt-vault-${format}.zip`);
     toast(t('exportArchiveDone', { format: label, count: S.conversations.length }));
   } catch (error) {
