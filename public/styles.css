@@ -418,6 +418,58 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 .conversation-export-surface .message-head time { margin-left: auto; }
 .conversation-export-surface .tool-card { width: 784px; }
 
+.pdf-export-document {
+  --surface: #fff;
+  --surface-2: #f4f7f5;
+  --ink: #202722;
+  --muted: #657068;
+  --faint: #89928b;
+  --line: #dfe6e1;
+  --accent: #237b67;
+  --accent-ink: #1c6757;
+  --accent-soft: #e8f2ee;
+  position: absolute;
+  z-index: -100;
+  top: 0;
+  left: -100000px;
+  width: 760px;
+  min-height: 1px;
+  padding: 56px 64px 72px;
+  color: var(--ink);
+  background: #fff;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+}
+.pdf-export-header { margin-bottom: 20px; padding-bottom: 27px; border-bottom: 2px solid var(--accent); }
+.pdf-export-header span { color: var(--accent-ink); font-size: 9px; font-weight: 800; letter-spacing: .16em; }
+.pdf-export-header h1 { margin: 11px 0 10px; color: #17201b; font: 700 31px/1.3 Georgia, "Songti SC", serif; overflow-wrap: anywhere; }
+.pdf-export-header p { margin: 0; color: var(--muted); font-size: 10px; }
+.pdf-export-body { display: flex; flex-direction: column; }
+.pdf-message { padding: 24px 0 26px; border-bottom: 1px solid var(--line); }
+.pdf-message:last-child { border-bottom: 0; }
+.pdf-message.user { margin: 13px 0 3px; padding: 18px 21px 20px; background: #f2f7f5; border: 1px solid #dfeae5; border-radius: 12px; }
+.pdf-message-label { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; color: var(--accent-ink); font-size: 10px; letter-spacing: .02em; }
+.pdf-message-label span { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; }
+.pdf-message.assistant .pdf-message-label { color: #273029; }
+.pdf-message.assistant .pdf-message-label span { background: #9ccfc1; }
+.pdf-message-body { padding: 0 !important; font-size: 15px; line-height: 1.72; }
+.pdf-message-body p { margin: .62em 0; }
+.pdf-message-body h1, .pdf-message-body h2, .pdf-message-body h3, .pdf-message-body h4, .pdf-message-body h5 { margin: 1.25em 0 .48em; line-height: 1.32; }
+.pdf-message-body h1 { font-size: 1.45em; }
+.pdf-message-body h2 { font-size: 1.28em; }
+.pdf-message-body h3 { font-size: 1.14em; }
+.pdf-message-body ul, .pdf-message-body ol { margin: .7em 0; padding-left: 1.55em; }
+.pdf-message-body li { margin: .22em 0; }
+.pdf-message-body blockquote { margin: .85em 0; padding: .62em .9em; background: #f3f6f4; border-left-width: 3px; }
+.pdf-message-body .math-block, .pdf-message-body .math-display { margin: .8em 0; overflow: visible; }
+.pdf-message-body .table-wrap { overflow: visible; }
+.pdf-message-body table { table-layout: fixed; }
+.pdf-message-body th, .pdf-message-body td { padding: 7px 8px; font-size: 12px; overflow-wrap: anywhere; }
+.pdf-message-body .code-block { margin: .85em 0; border-radius: 8px; }
+.pdf-message-body .code-toolbar button { display: none; }
+.pdf-message-body .code-block pre { overflow: visible; }
+.pdf-message-body .code-block pre code { font-size: 11px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pdf-message-body .citation-pill, .pdf-message-body .sources-panel, .pdf-message-body .attachment-grid { display: none; }
+
 .toast-region { position: fixed; z-index: 60; right: 18px; bottom: 18px; display: flex; align-items: flex-end; flex-direction: column; gap: 8px; pointer-events: none; }
 .toast { display: flex; align-items: center; gap: 9px; max-width: 360px; padding: 10px 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 9px; box-shadow: var(--shadow); font-size: 10px; animation: toast-in .2s ease-out; }
 .toast::before { content: ""; width: 7px; height: 7px; background: var(--accent); border-radius: 50%; }

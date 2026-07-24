@@ -103,6 +103,11 @@ test('folds assistant messages that were actually sent to tools', () => {
     role: 'assistant',
     content: '{"open":[{"ref_id":"https://example.com"}]}'
   }), true);
+  assert.equal(isInternalToolMessage({
+    role: 'assistant',
+    content: 'internal payload',
+    metadata: { is_visually_hidden_from_conversation: true }
+  }), true);
 
   const html = renderConversationMessages({
     messages: [

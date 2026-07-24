@@ -110,6 +110,7 @@ function messageRecipient(message) {
 export function isInternalToolMessage(message, adjacentMessage = null) {
   if (message?.role === 'tool') return true;
   if (message?.role !== 'assistant') return false;
+  if (message?.metadata?.is_visually_hidden_from_conversation) return true;
 
   const recipient = messageRecipient(message);
   if (recipient && !/^(?:all|assistant|user)$/i.test(recipient)) return true;
