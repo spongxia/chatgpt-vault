@@ -31,23 +31,39 @@ export function calculateRasterScale(width, height, options = {}) {
 
 export function planPdfSlices(totalHeight, targetHeight, breakpoints = [], options = {}) {
   const slices = [];
-  const sorted = [...new Set(breakpoints.map(Math.round))]
-    .filter(point => point > 0 && point < totalHeight)
-    .sort((a, b) => a - b);
   const minimumUsefulRatio = options.minimumUsefulRatio ?? 0.72;
   const protectedRanges = (options.protectedRanges || [])
     .map(range => ({ start: Math.round(range.start), end: Math.round(range.end) }))
     .filter(range => range.end > range.start && range.start >= 0 && range.end <= totalHeight)
     .sort((a, b) => a.start - b.start);
+  const unbreakableRanges = protectedRanges
+    .filter(range => range.end - range.start <= targetHeight);
+  const sorted = [...new Set([
+    ...breakpoints.map(Math.round),
+    ...unbreakableRanges.map(range => range.start)
+  ])]
+    .filter(point => point > 0 && point < totalHeight)
+    .sort((a, b) => a - b);
+  const isProtectedPoint = point => unbreakableRanges
+    .some(range => point > range.start && point < range.end);
   let start = 0;
   while (start < totalHeight) {
     const idealEnd = Math.min(totalHeight, start + targetHeight);
     const minimumUsefulEnd = start + targetHeight * minimumUsefulRatio;
-    const naturalEnd = [...sorted].reverse().find(point => point <= idealEnd && point >= minimumUsefulEnd);
-    const crossingRange = protectedRanges.find(range => range.start > start && range.start < idealEnd && range.end > idealEnd);
-    const end = idealEnd === totalHeight
+    const naturalEnd = [...sorted].reverse().find(point =>
+      point <= idealEnd &&
+      point >= minimumUsefulEnd &&
+      !isProtectedPoint(point)
+    );
+    let end = idealEnd === totalHeight
       ? totalHeight
-      : crossingRange?.start || naturalEnd || idealEnd;
+      : naturalEnd || idealEnd;
+    const containingRange = unbreakableRanges.find(range =>
+      end > range.start &&
+      end < range.end &&
+      range.start > start
+    );
+    if (containingRange) end = containingRange.start;
     slices.push({ start, end });
     start = end;
   }
@@ -163,6 +179,16 @@ async function renderSurfaceCanvas(surface, breakpointSelector, options = {}) {
           end: node.getBoundingClientRect().bottom - surfaceRect.top
         }))
       : [];
+    const textLineBottoms = options.lineSelector
+      ? [...surface.querySelectorAll(options.lineSelector)].flatMap(node => {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        const bottoms = [...range.getClientRects()]
+          .map(rect => rect.bottom - surfaceRect.top + (options.lineSafetyOffset || 0));
+        range.detach();
+        return bottoms;
+      })
+      : [];
     const canvas = await globalThis.html2canvas(surface, {
       backgroundColor: '#ffffff',
       scale,
@@ -178,7 +204,9 @@ async function renderSurfaceCanvas(surface, breakpointSelector, options = {}) {
     const canvasScale = canvas.height / height;
     return {
       canvas,
-      breakpoints: [...nodeBottoms, ...nodeTops].map(point => point * canvasScale),
+      breakpoints: [...nodeBottoms, ...nodeTops, ...textLineBottoms]
+        .filter(point => point > 0 && point < height)
+        .map(point => point * canvasScale),
       protectedRanges: nodeRanges.map(range => ({
         start: range.start * canvasScale,
         end: range.end * canvasScale
@@ -199,11 +227,25 @@ async function renderConversationCanvas(conversation) {
 async function renderPdfCanvas(conversation) {
   return renderSurfaceCanvas(
     buildPdfSurface(conversation),
-    '.pdf-message, .pdf-message-body > *, .pdf-message-body li, .pdf-message-body tr',
+    [
+      '.pdf-message',
+      '.pdf-message-body > *',
+      '.pdf-message-body li',
+      '.pdf-message-body tr',
+      '.pdf-message.user',
+      '.pdf-message-body .math-block',
+      '.pdf-message-body .math-display',
+      '.pdf-message-body table',
+      '.pdf-message-body .code-block',
+      '.pdf-message-body blockquote'
+    ].join(', '),
     {
       includeRanges: true,
       startSelector: '.pdf-message-body h1, .pdf-message-body h2, .pdf-message-body h3, .pdf-message-body h4',
-      rangeFilter: node => node.classList.contains('user')
+      lineSelector: '.pdf-message-body p, .pdf-message-body li',
+      lineSafetyOffset: 4,
+      rangeFilter: node =>
+        node.matches('.pdf-message.user, .math-block, .math-display, table, .code-block, blockquote')
     }
   );
 }
@@ -227,13 +269,14 @@ export async function createConversationPdf(conversation) {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 36;
-  const footerHeight = 26;
+  const bottomSafety = 28;
   const contentWidth = pageWidth - margin * 2;
-  const contentHeight = pageHeight - margin * 2 - footerHeight;
+  const contentHeight = pageHeight - margin * 2 - bottomSafety;
   const pointsPerPixel = contentWidth / canvas.width;
   const targetSliceHeight = Math.floor(contentHeight / pointsPerPixel);
   const slices = planPdfSlices(canvas.height, targetSliceHeight, breakpoints, {
-    protectedRanges
+    protectedRanges,
+    minimumUsefulRatio: 0.56
   });
 
   slices.forEach((slice, index) => {
@@ -258,16 +301,6 @@ export async function createConversationPdf(conversation) {
     );
   });
 
-  slices.forEach((_, index) => {
-    pdf.setPage(index + 1);
-    pdf.setDrawColor(222, 228, 223);
-    pdf.setLineWidth(0.5);
-    pdf.line(margin, pageHeight - 27, pageWidth - margin, pageHeight - 27);
-    pdf.setFontSize(8);
-    pdf.setTextColor(110, 118, 113);
-    pdf.text('ChatGPT Vault', margin, pageHeight - 13);
-    pdf.text(`${index + 1} / ${slices.length}`, pageWidth - margin, pageHeight - 13, { align: 'right' });
-  });
   pdf.setProperties({
     title: conversation.title,
     subject: 'ChatGPT Vault conversation export',

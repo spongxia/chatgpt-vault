@@ -43,6 +43,34 @@ test('keeps a message card together when it crosses the ideal page edge', () => 
   );
 });
 
+test('does not choose a natural breakpoint inside a protected card', () => {
+  assert.deepEqual(
+    planPdfSlices(2000, 1000, [800, 1600], {
+      protectedRanges: [{ start: 700, end: 900 }],
+      minimumUsefulRatio: 0.6
+    }),
+    [
+      { start: 0, end: 700 },
+      { start: 700, end: 1600 },
+      { start: 1600, end: 2000 }
+    ]
+  );
+});
+
+test('can split oversized protected content using its inner line boundaries', () => {
+  assert.deepEqual(
+    planPdfSlices(2500, 1000, [800, 1600, 2200], {
+      protectedRanges: [{ start: 100, end: 2300 }],
+      minimumUsefulRatio: 0.6
+    }),
+    [
+      { start: 0, end: 800 },
+      { start: 800, end: 1600 },
+      { start: 1600, end: 2500 }
+    ]
+  );
+});
+
 test('creates filesystem-safe visual export names', () => {
   assert.equal(safeDownloadName('  计划/复盘: 2026?  '), '计划-复盘- 2026-');
 });
