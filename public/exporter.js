@@ -6,6 +6,11 @@ import {
 } from './renderer.js';
 import { getLocale, t } from './i18n.js';
 
+const PDF_PAGE_WIDTH_PX = 760;
+const PDF_PAGE_TOP_PADDING_PX = 40;
+const PDF_PAGE_BOTTOM_PADDING_PX = 44;
+const PDF_ATOMIC_CONTENT_SELECTOR = '.katex, .math-block, .math-display';
+
 export function safeDownloadName(value, fallback = 'conversation') {
   const cleaned = String(value || '')
     .normalize('NFC')
@@ -29,45 +34,20 @@ export function calculateRasterScale(width, height, options = {}) {
   );
 }
 
-export function planPdfSlices(totalHeight, targetHeight, breakpoints = [], options = {}) {
-  const slices = [];
-  const minimumUsefulRatio = options.minimumUsefulRatio ?? 0.72;
-  const protectedRanges = (options.protectedRanges || [])
-    .map(range => ({ start: Math.round(range.start), end: Math.round(range.end) }))
-    .filter(range => range.end > range.start && range.start >= 0 && range.end <= totalHeight)
-    .sort((a, b) => a.start - b.start);
-  const unbreakableRanges = protectedRanges
-    .filter(range => range.end - range.start <= targetHeight);
-  const sorted = [...new Set([
-    ...breakpoints.map(Math.round),
-    ...unbreakableRanges.map(range => range.start)
-  ])]
-    .filter(point => point > 0 && point < totalHeight)
-    .sort((a, b) => a - b);
-  const isProtectedPoint = point => unbreakableRanges
-    .some(range => point > range.start && point < range.end);
-  let start = 0;
-  while (start < totalHeight) {
-    const idealEnd = Math.min(totalHeight, start + targetHeight);
-    const minimumUsefulEnd = start + targetHeight * minimumUsefulRatio;
-    const naturalEnd = [...sorted].reverse().find(point =>
-      point <= idealEnd &&
-      point >= minimumUsefulEnd &&
-      !isProtectedPoint(point)
-    );
-    let end = idealEnd === totalHeight
-      ? totalHeight
-      : naturalEnd || idealEnd;
-    const containingRange = unbreakableRanges.find(range =>
-      end > range.start &&
-      end < range.end &&
-      range.start > start
-    );
-    if (containingRange) end = containingRange.start;
-    slices.push({ start, end });
-    start = end;
+export function findLargestFittingIndex(length, fits) {
+  let low = 1;
+  let high = Math.max(0, length);
+  let best = 0;
+  while (low <= high) {
+    const middle = Math.floor((low + high) / 2);
+    if (fits(middle)) {
+      best = middle;
+      low = middle + 1;
+    } else {
+      high = middle - 1;
+    }
   }
-  return slices;
+  return best;
 }
 
 export function cleanDocumentContent(content) {
@@ -121,11 +101,14 @@ function buildJpegSurface(conversation) {
   return surface;
 }
 
-function buildPdfSurface(conversation) {
+function buildPdfSurface(conversation, pageHeight) {
   const printable = printableConversationMessages(conversation.messages);
-  const surface = document.createElement('article');
+  const surface = document.createElement('div');
   surface.className = 'pdf-export-document';
   surface.setAttribute('aria-hidden', 'true');
+  surface.style.setProperty('--pdf-page-height', `${pageHeight}px`);
+  surface.style.setProperty('--pdf-page-top-padding', `${PDF_PAGE_TOP_PADDING_PX}px`);
+  surface.style.setProperty('--pdf-page-bottom-padding', `${PDF_PAGE_BOTTOM_PADDING_PX}px`);
 
   const header = document.createElement('header');
   header.className = 'pdf-export-header';
@@ -150,46 +133,22 @@ function buildPdfSurface(conversation) {
       <div class="message-body pdf-message-body">${rendered.html}</div>
     </section>`;
   }).join('');
-  surface.append(header, body);
   document.body.append(surface);
-  return surface;
+  return {
+    header,
+    messages: [...body.children],
+    surface
+  };
 }
 
-async function renderSurfaceCanvas(surface, breakpointSelector, options = {}) {
+async function renderSurfaceCanvas(surface) {
   if (typeof globalThis.html2canvas !== 'function') throw new Error(t('visualExporterUnavailable'));
   try {
     await document.fonts?.ready;
     const width = Math.ceil(surface.scrollWidth);
     const height = Math.ceil(surface.scrollHeight);
     const scale = calculateRasterScale(width, height);
-    const surfaceRect = surface.getBoundingClientRect();
-    const nodes = [...surface.querySelectorAll(breakpointSelector)];
-    const nodeBottoms = nodes
-      .map(node => node.getBoundingClientRect().bottom - surfaceRect.top);
-    const startNodes = options.startSelector
-      ? [...surface.querySelectorAll(options.startSelector)]
-      : options.includeStarts ? nodes : [];
-    const nodeTops = startNodes
-      .map(node => node.getBoundingClientRect().top - surfaceRect.top);
-    const nodeRanges = options.includeRanges
-      ? nodes
-        .filter(node => !options.rangeFilter || options.rangeFilter(node))
-        .map(node => ({
-          start: node.getBoundingClientRect().top - surfaceRect.top,
-          end: node.getBoundingClientRect().bottom - surfaceRect.top
-        }))
-      : [];
-    const textLineBottoms = options.lineSelector
-      ? [...surface.querySelectorAll(options.lineSelector)].flatMap(node => {
-        const range = document.createRange();
-        range.selectNodeContents(node);
-        const bottoms = [...range.getClientRects()]
-          .map(rect => rect.bottom - surfaceRect.top + (options.lineSafetyOffset || 0));
-        range.detach();
-        return bottoms;
-      })
-      : [];
-    const canvas = await globalThis.html2canvas(surface, {
+    return globalThis.html2canvas(surface, {
       backgroundColor: '#ffffff',
       scale,
       width,
@@ -201,53 +160,221 @@ async function renderSurfaceCanvas(surface, breakpointSelector, options = {}) {
       logging: false,
       useCORS: true
     });
-    const canvasScale = canvas.height / height;
-    return {
-      canvas,
-      breakpoints: [...nodeBottoms, ...nodeTops, ...textLineBottoms]
-        .filter(point => point > 0 && point < height)
-        .map(point => point * canvasScale),
-      protectedRanges: nodeRanges.map(range => ({
-        start: range.start * canvasScale,
-        end: range.end * canvasScale
-      }))
-    };
   } finally {
     surface.remove();
   }
 }
 
 async function renderConversationCanvas(conversation) {
-  return renderSurfaceCanvas(
-    buildJpegSurface(conversation),
-    '.conversation-export-header, .message, .tool-card'
-  );
+  return renderSurfaceCanvas(buildJpegSurface(conversation));
 }
 
-async function renderPdfCanvas(conversation) {
-  return renderSurfaceCanvas(
-    buildPdfSurface(conversation),
-    [
-      '.pdf-message',
-      '.pdf-message-body > *',
-      '.pdf-message-body li',
-      '.pdf-message-body tr',
-      '.pdf-message.user',
-      '.pdf-message-body .math-block',
-      '.pdf-message-body .math-display',
-      '.pdf-message-body table',
-      '.pdf-message-body .code-block',
-      '.pdf-message-body blockquote'
-    ].join(', '),
-    {
-      includeRanges: true,
-      startSelector: '.pdf-message-body h1, .pdf-message-body h2, .pdf-message-body h3, .pdf-message-body h4',
-      lineSelector: '.pdf-message-body p, .pdf-message-body li',
-      lineSafetyOffset: 4,
-      rangeFilter: node =>
-        node.matches('.pdf-message.user, .math-block, .math-display, table, .code-block, blockquote')
+function createPdfPage(surface) {
+  const page = document.createElement('section');
+  page.className = 'pdf-export-page';
+  const content = document.createElement('div');
+  content.className = 'pdf-export-page-content';
+  page.append(content);
+  surface.append(page);
+  return { content, page };
+}
+
+function pdfPageFits(pageState) {
+  return pageState.content.scrollHeight <= pageState.content.clientHeight;
+}
+
+function createMessageSegment(message, continued = false) {
+  const segment = message.cloneNode(false);
+  segment.classList.add('pdf-message-segment');
+  if (continued) segment.classList.add('continued');
+  const label = message.querySelector('.pdf-message-label')?.cloneNode(true);
+  const sourceBody = message.querySelector('.pdf-message-body');
+  const body = sourceBody.cloneNode(false);
+  if (label) segment.append(label);
+  segment.append(body);
+  return { body, element: segment };
+}
+
+function collectBlockBoundaries(root) {
+  const boundaries = [{ node: root, offset: 0 }];
+  if (root.matches?.(PDF_ATOMIC_CONTENT_SELECTOR)) {
+    boundaries.push({ node: root, offset: root.childNodes.length });
+    return boundaries;
+  }
+
+  const visit = parent => {
+    [...parent.childNodes].forEach((child, index) => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        let offset = 0;
+        for (const character of child.data) {
+          offset += character.length;
+          boundaries.push({ node: child, offset });
+        }
+        return;
+      }
+      if (child.nodeType !== Node.ELEMENT_NODE) return;
+      if (!child.matches(PDF_ATOMIC_CONTENT_SELECTOR)) visit(child);
+      boundaries.push({ node: parent, offset: index + 1 });
+    });
+  };
+  visit(root);
+  const end = boundaries.at(-1);
+  if (end.node !== root || end.offset !== root.childNodes.length) {
+    boundaries.push({ node: root, offset: root.childNodes.length });
+  }
+  return boundaries;
+}
+
+function cloneBlockRange(source, start, end) {
+  const range = document.createRange();
+  range.setStart(start.node, start.offset);
+  range.setEnd(end.node, end.offset);
+  const clone = source.cloneNode(false);
+  clone.append(range.cloneContents());
+  range.detach();
+  return clone;
+}
+
+function startContinuedMessage(newPage, message) {
+  const pageState = newPage();
+  const segment = createMessageSegment(message, true);
+  pageState.content.append(segment.element);
+  return { pageState, segment };
+}
+
+function splitOversizedBlock(newPage, message, initialPageState, initialSegment, block) {
+  const boundaries = collectBlockBoundaries(block);
+  let boundaryIndex = 0;
+  let pageState = initialPageState;
+  let segment = initialSegment;
+
+  while (boundaryIndex < boundaries.length - 1) {
+    const remaining = boundaries.length - boundaryIndex - 1;
+    const fittingCount = findLargestFittingIndex(remaining, count => {
+      const candidate = cloneBlockRange(
+        block,
+        boundaries[boundaryIndex],
+        boundaries[boundaryIndex + count]
+      );
+      segment.body.append(candidate);
+      const fits = pdfPageFits(pageState);
+      candidate.remove();
+      return fits;
+    });
+    if (!fittingCount) throw new Error(t('exportFailedGeneric'));
+
+    segment.body.append(cloneBlockRange(
+      block,
+      boundaries[boundaryIndex],
+      boundaries[boundaryIndex + fittingCount]
+    ));
+    boundaryIndex += fittingCount;
+    if (boundaryIndex < boundaries.length - 1) {
+      ({ pageState, segment } = startContinuedMessage(newPage, message));
     }
-  );
+  }
+  return { pageState, segment };
+}
+
+function splitMessageAcrossPages(newPage, message, initialPageState) {
+  let pageState = initialPageState;
+  let segment = createMessageSegment(message);
+  pageState.content.append(segment.element);
+  const blocks = [...message.querySelector('.pdf-message-body').children];
+
+  for (const block of blocks) {
+    const candidate = block.cloneNode(true);
+    const hadBlocks = segment.body.childElementCount > 0;
+    segment.body.append(candidate);
+    if (pdfPageFits(pageState)) continue;
+    candidate.remove();
+
+    if (hadBlocks) {
+      ({ pageState, segment } = startContinuedMessage(newPage, message));
+      segment.body.append(candidate);
+      if (pdfPageFits(pageState)) continue;
+      candidate.remove();
+    } else {
+      const hasPreviousContent = [...pageState.content.children]
+        .some(child => child !== segment.element);
+      if (hasPreviousContent) {
+        segment.element.remove();
+        ({ pageState, segment } = startContinuedMessage(newPage, message));
+        segment.body.append(candidate);
+        if (pdfPageFits(pageState)) continue;
+        candidate.remove();
+      }
+    }
+
+    ({ pageState, segment } = splitOversizedBlock(
+      newPage,
+      message,
+      pageState,
+      segment,
+      block
+    ));
+  }
+  return pageState;
+}
+
+function paginatePdfSurface(surface, header, messages) {
+  const pages = [];
+  const newPage = () => {
+    const pageState = createPdfPage(surface);
+    pages.push(pageState);
+    return pageState;
+  };
+  let pageState = newPage();
+  pageState.content.append(header.cloneNode(true));
+
+  for (const message of messages) {
+    const candidate = message.cloneNode(true);
+    pageState.content.append(candidate);
+    if (pdfPageFits(pageState)) continue;
+    candidate.remove();
+
+    if (message.classList.contains('assistant')) {
+      pageState = splitMessageAcrossPages(newPage, message, pageState);
+      continue;
+    }
+
+    pageState = newPage();
+    pageState.content.append(candidate);
+    if (pdfPageFits(pageState)) continue;
+    candidate.remove();
+    pageState = splitMessageAcrossPages(newPage, message, pageState);
+  }
+
+  const overflowingPage = pages.find(state => !pdfPageFits(state));
+  if (overflowingPage) throw new Error(t('exportFailedGeneric'));
+  return pages;
+}
+
+async function waitForStablePdfLayout() {
+  await document.fonts?.ready;
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+async function renderPdfPageCanvas(page) {
+  const width = Math.ceil(page.offsetWidth);
+  const height = Math.ceil(page.offsetHeight);
+  const scale = calculateRasterScale(width, height, {
+    maxDimension: 8192,
+    maxPixels: 20_000_000,
+    preferredScale: 2
+  });
+  return globalThis.html2canvas(page, {
+    backgroundColor: '#ffffff',
+    scale,
+    width,
+    height,
+    windowWidth: width,
+    windowHeight: height,
+    scrollX: 0,
+    scrollY: 0,
+    logging: false,
+    useCORS: true
+  });
 }
 
 function canvasToBlob(canvas, type, quality) {
@@ -257,49 +384,48 @@ function canvasToBlob(canvas, type, quality) {
 }
 
 export async function createConversationJpeg(conversation) {
-  const { canvas } = await renderConversationCanvas(conversation);
+  const canvas = await renderConversationCanvas(conversation);
   return canvasToBlob(canvas, 'image/jpeg', 0.92);
 }
 
 export async function createConversationPdf(conversation) {
   const JsPdf = globalThis.jspdf?.jsPDF;
-  if (!JsPdf) throw new Error(t('visualExporterUnavailable'));
-  const { canvas, breakpoints, protectedRanges } = await renderPdfCanvas(conversation);
+  if (!JsPdf || typeof globalThis.html2canvas !== 'function') {
+    throw new Error(t('visualExporterUnavailable'));
+  }
   const pdf = new JsPdf({ orientation: 'portrait', unit: 'pt', format: 'a4', compress: true });
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 36;
-  const bottomSafety = 28;
   const contentWidth = pageWidth - margin * 2;
-  const contentHeight = pageHeight - margin * 2 - bottomSafety;
-  const pointsPerPixel = contentWidth / canvas.width;
-  const targetSliceHeight = Math.floor(contentHeight / pointsPerPixel);
-  const slices = planPdfSlices(canvas.height, targetSliceHeight, breakpoints, {
-    protectedRanges,
-    minimumUsefulRatio: 0.56
-  });
+  const contentHeight = pageHeight - margin * 2;
+  const pagePixelHeight = Math.round(PDF_PAGE_WIDTH_PX * contentHeight / contentWidth);
+  const { header, messages, surface } = buildPdfSurface(conversation, pagePixelHeight);
 
-  slices.forEach((slice, index) => {
-    if (index > 0) pdf.addPage();
-    const sliceHeight = slice.end - slice.start;
-    const pageCanvas = document.createElement('canvas');
-    pageCanvas.width = canvas.width;
-    pageCanvas.height = sliceHeight;
-    const context = pageCanvas.getContext('2d');
-    context.fillStyle = '#ffffff';
-    context.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-    context.drawImage(canvas, 0, slice.start, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
-    pdf.addImage(
-      pageCanvas.toDataURL('image/jpeg', 0.92),
-      'JPEG',
-      margin,
-      margin,
-      contentWidth,
-      sliceHeight * pointsPerPixel,
-      undefined,
-      'FAST'
-    );
-  });
+  try {
+    await waitForStablePdfLayout();
+    const pages = paginatePdfSurface(surface, header, messages);
+    await waitForStablePdfLayout();
+
+    for (let index = 0; index < pages.length; index += 1) {
+      if (index > 0) pdf.addPage();
+      const canvas = await renderPdfPageCanvas(pages[index].page);
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 0.92),
+        'JPEG',
+        margin,
+        margin,
+        contentWidth,
+        contentHeight,
+        undefined,
+        'FAST'
+      );
+      canvas.width = 1;
+      canvas.height = 1;
+    }
+  } finally {
+    surface.remove();
+  }
 
   pdf.setProperties({
     title: conversation.title,
