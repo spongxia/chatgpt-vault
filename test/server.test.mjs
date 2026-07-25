@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 test('sync index reports remote timestamps without returning message bodies', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'chatgpt-vault-server-'));
   process.env.CHATGPT_VAULT_DATA_DIR = directory;
-  const { importConversations, syncIndex } = await import(`../server.mjs?test=${Date.now()}`);
+  const { healthPayload, importConversations, syncIndex, updateConversationMessage } = await import(`../server.mjs?test=${Date.now()}`);
 
   try {
     const imported = await importConversations({
@@ -49,6 +49,15 @@ test('sync index reports remote timestamps without returning message bodies', as
     assert.equal(index[0].remoteArchived, true);
     assert.equal(index[0].messageCount, 2);
     assert.equal('messages' in index[0], false);
+
+    const edited = await updateConversationMessage('remote-1', 'assistant-message', { content: '本地编辑后的回答' });
+    assert.equal(edited.messages[1].content, '本地编辑后的回答');
+    assert.ok(edited.messages[1].metadata.vaultEditedAt);
+
+    const health = healthPayload();
+    const packageMetadata = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+    assert.equal(health.version, packageMetadata.version);
+    assert.equal(health.apiVersion, 2);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

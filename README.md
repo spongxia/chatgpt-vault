@@ -19,7 +19,7 @@ ChatGPT Vault is a local-first workspace for importing, searching, reading, orga
 - Render Markdown, code blocks, tables, block quotes, links, and LaTeX formulas locally.
 - Fold tool calls, web results, uploaded text, generated files, and attachments so long content does not take over the page.
 - Recover and fold citation sources when the imported ChatGPT metadata contains URLs.
-- Export one conversation as Markdown or JSON, or export all conversations as an official-compatible `conversations.json`.
+- Export one conversation as Markdown, JSON, JPG, or paginated PDF. Export the full library as an official-compatible `conversations.json`, a Markdown ZIP, or a JSON ZIP.
 - Use the interface in English, 简体中文, Français, Español, 日本語, العربية, Deutsch, Italiano, or Português.
 
 ChatGPT Vault is an independent community project and is not affiliated with OpenAI.

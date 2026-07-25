@@ -22,7 +22,7 @@ English、简体中文、Français、Español、日本語、العربية、Deu
 - 上传文件全文、网页检索、工具调用和生成文件默认折叠。
 - 可选 Tampermonkey/Violentmonkey 油猴脚本，按选择增量同步。
 - 搜索、收藏、归档、重命名、标签、暗色模式和阿拉伯语 RTL 布局。
-- 单条会话导出 Markdown/JSON，以及官方兼容的 `conversations.json`。
+- 单条会话可导出 Markdown、JSON、JPG 长图或分页 PDF；全部会话可导出官方兼容的 `conversations.json`、Markdown ZIP 或 JSON ZIP。
 - 提供零依赖 macOS 启动器，可检测并安装 Node.js、启动本地服务并自动打开浏览器。
 - 以轻量本地 Web 应用运行，方便自行扩展或封装。
 

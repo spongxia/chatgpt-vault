@@ -94,6 +94,28 @@ test('replaces an authoritative remote branch instead of retaining stale message
   );
 });
 
+test('preserves locally edited message content during later remote syncs', () => {
+  const initial = normalizeChatGptExport(officialConversation);
+  initial.messages[1].content = '本地修改后的回答';
+  initial.messages[1].metadata.vaultEditedAt = '2026-07-19T00:00:00.000Z';
+  const incoming = normalizeChatGptExport({
+    ...officialConversation,
+    mapping: {
+      ...officialConversation.mapping,
+      'assistant-node': {
+        ...officialConversation.mapping['assistant-node'],
+        message: {
+          ...officialConversation.mapping['assistant-node'].message,
+          content: { parts: ['远端回答'] }
+        }
+      }
+    }
+  });
+  const merged = mergeConversation(initial, incoming);
+  assert.equal(merged.messages[1].content, '本地修改后的回答');
+  assert.equal(merged.messages[1].metadata.vaultEditedAt, '2026-07-19T00:00:00.000Z');
+});
+
 test('renders a portable Markdown export', () => {
   const conversation = normalizeChatGptExport(officialConversation);
   const markdown = conversationToMarkdown(conversation);

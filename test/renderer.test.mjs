@@ -23,6 +23,13 @@ test('renders inline and display LaTeX through the math renderer', () => {
   assert.doesNotMatch(rendered.html, /\\\\frac/);
 });
 
+test('renders multiline display math inside blockquotes', () => {
+  const rendered = renderRichText('> 公式如下：\n> \\[\n> \\frac{a}{b}\n> \\]\n> 说明文字');
+  assert.match(rendered.html, /<blockquote>/);
+  assert.match(rendered.html, /data-math="display"/);
+  assert.doesNotMatch(rendered.html, /\\\\frac/);
+});
+
 test('turns uploaded-file markers into compact attachment cards', () => {
   const extracted = extractAttachmentMarkers('请阅读\n\n[图片或附件：sediment://file_abc]');
   assert.equal(extracted.text, '请阅读');
@@ -96,6 +103,11 @@ test('folds assistant messages that were actually sent to tools', () => {
     role: 'assistant',
     content: '{"open":[{"ref_id":"https://example.com"}]}'
   }), true);
+  assert.equal(isInternalToolMessage({
+    role: 'assistant',
+    content: 'internal payload',
+    metadata: { is_visually_hidden_from_conversation: true }
+  }), true);
 
   const html = renderConversationMessages({
     messages: [
@@ -107,4 +119,14 @@ test('folds assistant messages that were actually sent to tools', () => {
   });
   assert.equal((html.match(/class="message assistant"/g) || []).length, 1);
   assert.equal((html.match(/class="tool-card/g) || []).length, 1);
+});
+
+test('adds an edit action to each visible historical message', () => {
+  const html = renderConversationMessages({
+    messages: [
+      { id: 'message-1', role: 'user', content: '原始内容', createdAt: '2026-01-01T00:00:00Z' }
+    ]
+  });
+  assert.match(html, /data-edit-index="0"/);
+  assert.match(html, /href="#i-edit"/);
 });

@@ -86,7 +86,7 @@
             <h1 id="list-title">全部对话</h1>
             <p id="list-subtitle">0 条记录</p>
           </div>
-          <button class="icon-btn" id="export-all-button" aria-label="导出 conversations.json" title="导出 conversations.json" data-i18n-aria="exportAll" data-i18n-title="exportAll"><svg><use href="#i-download"></use></svg></button>
+          <button class="icon-btn" id="export-all-button" aria-label="导出全部对话" title="导出全部对话" data-i18n-aria="exportAll" data-i18n-title="exportAll"><svg><use href="#i-download"></use></svg></button>
           <button class="icon-btn desktop-panel-toggle collapse-direction" id="collapse-list" aria-label="折叠对话列表" title="折叠对话列表" data-i18n-aria="collapseList" data-i18n-title="collapseList"><svg><use href="#i-chevron"></use></svg></button>
         </header>
         <div class="search-wrap">
@@ -179,6 +179,16 @@
       </form>
     </dialog>
 
+    <dialog id="message-dialog" class="modal edit-message-modal">
+      <form method="dialog" class="modal-card" id="message-dialog-form">
+        <header><div><span class="modal-kicker" data-i18n="editMessageKicker">编辑本地记录</span><h2 data-i18n="editMessage">编辑消息</h2></div><button class="icon-btn" value="cancel" aria-label="关闭"><svg><use href="#i-close"></use></svg></button></header>
+        <label class="field-label" for="message-dialog-input" data-i18n="messageContent">消息内容</label>
+        <textarea class="message-textarea" id="message-dialog-input" rows="14" required></textarea>
+        <p class="field-hint" data-i18n="editMessageHint">本地编辑会在后续同步时保留。</p>
+        <footer><button value="cancel" class="secondary-button" data-i18n="cancel">取消</button><button value="default" class="primary-button" data-i18n="save">保存</button></footer>
+      </form>
+    </dialog>
+
     <dialog id="help-dialog" class="modal help-modal">
       <form method="dialog" class="modal-card">
         <header><div><span class="modal-kicker" data-i18n="firstUse">第一次使用</span><h2 data-i18n="bringHome">把所有聊天搬回本地</h2></div><button class="icon-btn" value="cancel" aria-label="关闭"><svg><use href="#i-close"></use></svg></button></header>
@@ -200,13 +210,23 @@
       <button data-action="delete" class="danger"><svg><use href="#i-trash"></use></svg><span data-i18n="delete">删除</span></button>
     </div>
 
+    <div class="popover export-menu" id="export-all-menu" hidden>
+      <button data-batch-format="chatgpt"><span class="file-badge">JSON</span><p><strong data-i18n="batchChatGpt">ChatGPT JSON</strong><small data-i18n="batchChatGptDesc">官方兼容的 conversations.json</small></p></button>
+      <button data-batch-format="markdown"><span class="file-badge">ZIP</span><p><strong data-i18n="batchMarkdownZip">Markdown ZIP</strong><small data-i18n="batchMarkdownZipDesc">每条对话一个 Markdown 文件</small></p></button>
+      <button data-batch-format="json"><span class="file-badge">ZIP</span><p><strong data-i18n="batchJsonZip">JSON ZIP</strong><small data-i18n="batchJsonZipDesc">每条对话一个 Vault JSON 文件</small></p></button>
+    </div>
+
     <div class="popover export-menu" id="export-menu" hidden>
       <button data-format="markdown"><span class="file-badge">MD</span><p><strong>Markdown</strong><small data-i18n="markdownDesc">适合阅读和笔记软件</small></p></button>
       <button data-format="json"><span class="file-badge">JSON</span><p><strong>JSON</strong><small data-i18n="jsonDesc">保留完整结构化数据</small></p></button>
+      <button data-format="jpg"><span class="file-badge">JPG</span><p><strong>JPG</strong><small data-i18n="jpgDesc">完整对话的高清长图</small></p></button>
+      <button data-format="pdf"><span class="file-badge">PDF</span><p><strong>PDF</strong><small data-i18n="pdfDesc">适合打印和分享的分页文档</small></p></button>
     </div>
 
     <div class="toast-region" id="toast-region" aria-live="polite"></div>
     <script defer src="/vendor/katex/katex.min.js"></script>
+    <script defer src="/vendor/html2canvas/html2canvas.min.js"></script>
+    <script defer src="/vendor/jspdf/jspdf.umd.min.js"></script>
     <script type="module" src="/app.js"></script>
   </body>
 </html>

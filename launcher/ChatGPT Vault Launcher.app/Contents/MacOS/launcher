@@ -5,6 +5,7 @@ set -u
 APP_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$APP_DIR/../../../.." && pwd)"
 URL="http://127.0.0.1:4318"
+API_VERSION="2"
 LOG_DIR="$PROJECT_ROOT/data"
 LOG_FILE="$LOG_DIR/chatgpt-vault-launcher.log"
 PID_FILE="$LOG_DIR/chatgpt-vault-launcher.pid"
@@ -88,7 +89,49 @@ command -v npm >/dev/null 2>&1 || {
 }
 
 mkdir -p "$LOG_DIR"
-if [[ ! -f "$PROJECT_ROOT/node_modules/katex/package.json" ]]; then
+APP_VERSION="$(cd "$PROJECT_ROOT" && node -p 'require("./package.json").version')"
+
+dependencies_are_ready() {
+  [[ -f "$PROJECT_ROOT/node_modules/katex/package.json" ]] &&
+    [[ -f "$PROJECT_ROOT/node_modules/html2canvas/dist/html2canvas.min.js" ]] &&
+    [[ -f "$PROJECT_ROOT/node_modules/jspdf/dist/jspdf.umd.min.js" ]]
+}
+
+service_health() {
+  curl -fsS --max-time 2 "$URL/api/health" 2>/dev/null
+}
+
+service_is_current() {
+  local health
+  health="$(service_health)" || return 1
+  [[ "$health" == *"\"version\":\"$APP_VERSION\""* ]] &&
+    [[ "$health" == *"\"apiVersion\":$API_VERSION"* ]]
+}
+
+stop_managed_service() {
+  local pid command_line
+  pid=""
+  if [[ -f "$PID_FILE" ]]; then
+    pid="$(tr -dc '0-9' < "$PID_FILE")"
+  fi
+  if [[ "$pid" != <-> ]]; then
+    pid="$(/usr/sbin/lsof -nP -iTCP:4318 -sTCP:LISTEN -t 2>/dev/null | sed -n '1p')"
+  fi
+  [[ "$pid" == <-> ]] || return 1
+  if kill -0 "$pid" >/dev/null 2>&1; then
+    command_line="$(ps -p "$pid" -o command= 2>/dev/null)"
+    [[ "$command_line" == *"server.mjs"* ]] || return 1
+    kill "$pid" >/dev/null 2>&1 || return 1
+    for _ in {1..25}; do
+      kill -0 "$pid" >/dev/null 2>&1 || break
+      sleep 0.2
+    done
+    kill -0 "$pid" >/dev/null 2>&1 && return 1
+  fi
+  rm -f "$PID_FILE"
+}
+
+if ! dependencies_are_ready; then
   /usr/bin/osascript -e 'display notification "正在准备应用依赖，请稍候…" with title "ChatGPT Vault"'
   if ! (cd "$PROJECT_ROOT" && npm install >>"$LOG_FILE" 2>&1); then
     dialog "依赖安装失败。详细信息已写入 data/chatgpt-vault-launcher.log。"
@@ -96,19 +139,27 @@ if [[ ! -f "$PROJECT_ROOT/node_modules/katex/package.json" ]]; then
   fi
 fi
 
-if ! curl -fsS --max-time 2 "$URL/api/health" >/dev/null 2>&1; then
+if service_health >/dev/null && ! service_is_current; then
+  /usr/bin/osascript -e 'display notification "正在切换到新版本地服务…" with title "ChatGPT Vault"'
+  if ! stop_managed_service; then
+    dialog "检测到旧版 ChatGPT Vault 服务仍在运行，但无法自动关闭。请退出旧服务后再次双击启动器。"
+    exit 1
+  fi
+fi
+
+if ! service_is_current; then
   (
     cd "$PROJECT_ROOT"
     nohup node server.mjs >>"$LOG_FILE" 2>&1 &
     echo $! >"$PID_FILE"
   )
   for _ in {1..30}; do
-    curl -fsS --max-time 1 "$URL/api/health" >/dev/null 2>&1 && break
+    service_is_current && break
     sleep 0.5
   done
 fi
 
-if ! curl -fsS --max-time 2 "$URL/api/health" >/dev/null 2>&1; then
+if ! service_is_current; then
   dialog "ChatGPT Vault 本地服务启动失败。详细信息已写入 data/chatgpt-vault-launcher.log。"
   exit 1
 fi

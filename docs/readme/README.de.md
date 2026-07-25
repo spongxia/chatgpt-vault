@@ -18,7 +18,7 @@ Ein unabhängiges Community-Projekt ohne Verbindung zu OpenAI.
 - Webresultate, lange Texte, Tool-Aufrufe und erzeugte Dateien werden eingeklappt.
 - Userscript für ausgewählte inkrementelle Synchronisierung.
 - Suche, Favoriten, Archiv, Umbenennen, Tags, Dark Mode und arabisches RTL.
-- Markdown/JSON sowie kompatibles `conversations.json`.
+- Einzelne Gespräche als Markdown, JSON, JPG-Langbild oder PDF; die gesamte Bibliothek als `conversations.json`, Markdown-ZIP oder JSON-ZIP.
 
 ## Schnellstart
 

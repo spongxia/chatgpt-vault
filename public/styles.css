@@ -188,7 +188,7 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 .reader-actions { display: flex; align-items: center; gap: 1px; }
 #favorite-button.active { color: #bc8a18; }
 #favorite-button.active svg { fill: currentColor; }
-.messages { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+.messages { flex: 1; overflow-y: auto; }
 .message { width: min(820px, calc(100% - 64px)); margin: 0 auto; padding: 26px 0 10px; }
 .message + .message { border-top: 0; }
 .message-head { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
@@ -199,9 +199,10 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 .message.user .message-avatar svg { display: none; }
 .message-head strong { font-size: 11px; }
 .message-head time { margin-left: auto; color: var(--faint); font-size: 9px; }
-.copy-message { width: 27px; height: 27px; color: var(--faint); opacity: 0; }
-.copy-message svg { width: 14px; }
-.message:hover .copy-message { opacity: 1; }
+.copy-message, .edit-message { width: 27px; height: 27px; color: var(--faint); opacity: 0; }
+.copy-message svg, .edit-message svg { width: 14px; }
+.edit-message { opacity: .55; }
+.message:hover .copy-message, .message:hover .edit-message, .copy-message:focus-visible, .edit-message:focus-visible { opacity: 1; }
 .message.user { display: flex; align-items: flex-end; flex-direction: column; }
 .message.user .message-head { width: min(72%, 650px); }
 .message.user .message-body {
@@ -358,9 +359,12 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 @keyframes progress { from { transform: translateX(-120%); } to { transform: translateX(360%); } }
 
 .compact-modal { width: min(430px, calc(100vw - 28px)); }
+.edit-message-modal { width: min(720px, calc(100vw - 28px)); }
 .field-label { margin-bottom: 7px; color: var(--muted); font-size: 10px; font-weight: 650; }
 .text-field { width: 100%; padding: 10px 11px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; outline: none; }
 .text-field:focus { border-color: var(--accent); }
+.message-textarea { width: 100%; min-height: 280px; padding: 12px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; outline: none; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; resize: vertical; }
+.message-textarea:focus { border-color: var(--accent); }
 .field-hint { min-height: 15px; margin: 7px 0 0; color: var(--faint); font-size: 9px; line-height: 1.5; }
 .help-modal { width: min(560px, calc(100vw - 28px)); }
 .steps { display: flex; flex-direction: column; gap: 18px; padding: 0; list-style: none; }
@@ -383,6 +387,98 @@ kbd { padding: 2px 5px; color: color-mix(in srgb, currentColor 76%, transparent)
 .popover .danger { color: var(--danger); }
 .export-menu { width: 230px; }
 .export-menu > button { padding: 9px; }
+
+.conversation-export-surface {
+  --surface: #fff;
+  --surface-2: #f3f6f3;
+  --ink: #202620;
+  --muted: #626b64;
+  --faint: #8b948d;
+  --line: #dde3de;
+  --accent: #27846f;
+  --accent-ink: #1e6f5e;
+  --accent-soft: #e6f3ef;
+  position: absolute;
+  z-index: -100;
+  top: 0;
+  left: -100000px;
+  width: 900px;
+  min-height: 1px;
+  padding: 48px 0;
+  color: var(--ink);
+  background: #fff;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.conversation-export-header { width: 820px; margin: 0 auto 22px; padding: 0 32px 24px; border-bottom: 1px solid var(--line); }
+.conversation-export-header span { color: var(--accent-ink); font-size: 10px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+.conversation-export-header h1 { margin: 9px 0 8px; font: 700 28px/1.3 Georgia, "Songti SC", serif; overflow-wrap: anywhere; }
+.conversation-export-header p { margin: 0; color: var(--muted); font-size: 10px; }
+.conversation-export-surface .message { width: 820px; }
+.conversation-export-surface .message-head button { display: none; }
+.conversation-export-surface .message-head time { margin-left: auto; }
+.conversation-export-surface .tool-card { width: 784px; }
+
+.pdf-export-document {
+  --surface: #fff;
+  --surface-2: #f4f7f5;
+  --ink: #202722;
+  --muted: #657068;
+  --faint: #89928b;
+  --line: #dfe6e1;
+  --accent: #237b67;
+  --accent-ink: #1c6757;
+  --accent-soft: #e8f2ee;
+  position: absolute;
+  z-index: -100;
+  top: 0;
+  left: -100000px;
+  width: 760px;
+  min-height: 1px;
+  color: var(--ink);
+  background: #fff;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+}
+.pdf-export-page {
+  width: 760px;
+  height: var(--pdf-page-height);
+  padding: var(--pdf-page-top-padding) 64px var(--pdf-page-bottom-padding);
+  overflow: hidden;
+  color: var(--ink);
+  background: #fff;
+  box-sizing: border-box;
+}
+.pdf-export-page-content { height: 100%; overflow: hidden; }
+.pdf-export-header { margin-bottom: 20px; padding-bottom: 27px; border-bottom: 2px solid var(--accent); }
+.pdf-export-header span { color: var(--accent-ink); font-size: 9px; font-weight: 800; letter-spacing: .16em; }
+.pdf-export-header h1 { margin: 11px 0 10px; color: #17201b; font: 700 31px/1.3 Georgia, "Songti SC", serif; overflow-wrap: anywhere; }
+.pdf-export-header p { margin: 0; color: var(--muted); font-size: 10px; }
+.pdf-export-body { display: flex; flex-direction: column; }
+.pdf-message { padding: 24px 0 26px; border-bottom: 1px solid var(--line); }
+.pdf-message:last-child { border-bottom: 0; }
+.pdf-message.pdf-message-segment.continued { padding-top: 18px; }
+.pdf-message.user { margin: 13px 0 3px; padding: 18px 21px 20px; background: #f2f7f5; border: 1px solid #dfeae5; border-radius: 12px; }
+.pdf-message-label { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; color: var(--accent-ink); font-size: 10px; letter-spacing: .02em; }
+.pdf-message-label span { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; }
+.pdf-message.assistant .pdf-message-label { color: #273029; }
+.pdf-message.assistant .pdf-message-label span { background: #9ccfc1; }
+.pdf-message-body { padding: 0 !important; font-size: 15px; line-height: 1.72; }
+.pdf-message-body p { margin: .62em 0; }
+.pdf-message-body h1, .pdf-message-body h2, .pdf-message-body h3, .pdf-message-body h4, .pdf-message-body h5 { margin: 1.25em 0 .48em; line-height: 1.32; }
+.pdf-message-body h1 { font-size: 1.45em; }
+.pdf-message-body h2 { font-size: 1.28em; }
+.pdf-message-body h3 { font-size: 1.14em; }
+.pdf-message-body ul, .pdf-message-body ol { margin: .7em 0; padding-left: 1.55em; }
+.pdf-message-body li { margin: .22em 0; }
+.pdf-message-body blockquote { margin: .85em 0; padding: .62em .9em; background: #f3f6f4; border-left-width: 3px; }
+.pdf-message-body .math-block, .pdf-message-body .math-display { margin: .8em 0; overflow: visible; }
+.pdf-message-body .table-wrap { overflow: visible; }
+.pdf-message-body table { table-layout: fixed; }
+.pdf-message-body th, .pdf-message-body td { padding: 7px 8px; font-size: 12px; overflow-wrap: anywhere; }
+.pdf-message-body .code-block { margin: .85em 0; border-radius: 8px; }
+.pdf-message-body .code-toolbar button { display: none; }
+.pdf-message-body .code-block pre { overflow: visible; }
+.pdf-message-body .code-block pre code { font-size: 11px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pdf-message-body .citation-pill, .pdf-message-body .sources-panel, .pdf-message-body .attachment-grid { display: none; }
 
 .toast-region { position: fixed; z-index: 60; right: 18px; bottom: 18px; display: flex; align-items: flex-end; flex-direction: column; gap: 8px; pointer-events: none; }
 .toast { display: flex; align-items: center; gap: 9px; max-width: 360px; padding: 10px 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 9px; box-shadow: var(--shadow); font-size: 10px; animation: toast-in .2s ease-out; }

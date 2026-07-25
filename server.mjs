@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { readFileSync } from 'node:fs';
 import { mkdir, readFile, readdir, rename, unlink, writeFile } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -9,11 +10,16 @@ import {
   normalizeImportPayload,
   storageFilename
 } from './lib/conversations.mjs';
+import { createConversationArchive } from './lib/zip.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)));
+const APP_VERSION = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version;
+const API_VERSION = 2;
 const PUBLIC_DIR = join(ROOT, 'public');
 const SCRIPT_DIR = join(ROOT, 'scripts');
 const KATEX_DIR = join(ROOT, 'node_modules', 'katex', 'dist');
+const HTML2CANVAS_DIR = join(ROOT, 'node_modules', 'html2canvas', 'dist');
+const JSPDF_DIR = join(ROOT, 'node_modules', 'jspdf', 'dist');
 const DATA_DIR = resolve(process.env.CHATGPT_VAULT_DATA_DIR || join(ROOT, 'data', 'conversations'));
 const PORT = Number(process.env.PORT || 4318);
 const HOST = process.env.HOST || '127.0.0.1';
@@ -32,6 +38,15 @@ const MIME_TYPES = {
   '.user.js': 'text/javascript; charset=utf-8'
 };
 
+export function healthPayload() {
+  return {
+    ok: true,
+    version: APP_VERSION,
+    apiVersion: API_VERSION,
+    dataDirectory: DATA_DIR
+  };
+}
+
 function json(response, status, payload, headers = {}) {
   response.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
@@ -39,6 +54,17 @@ function json(response, status, payload, headers = {}) {
     ...headers
   });
   response.end(JSON.stringify(payload));
+}
+
+function download(response, body, filename, contentType, headers = {}) {
+  response.writeHead(200, {
+    'Content-Type': contentType,
+    'Content-Length': body.length,
+    'Content-Disposition': `attachment; filename="${filename}"`,
+    'Cache-Control': 'no-store',
+    ...headers
+  });
+  response.end(body);
 }
 
 function allowedOrigin(origin) {
@@ -181,6 +207,28 @@ async function updateConversation(id, changes) {
   return updated;
 }
 
+export async function updateConversationMessage(id, messageId, changes) {
+  const existing = await loadConversation(id);
+  if (!existing) return null;
+  if (typeof changes?.content !== 'string' || !changes.content.trim()) {
+    throw Object.assign(new Error('消息内容不能为空'), { status: 400 });
+  }
+  const index = (existing.messages || []).findIndex(message => message.id === messageId);
+  if (index < 0) throw Object.assign(new Error('没有找到这条消息'), { status: 404 });
+
+  const editedAt = new Date().toISOString();
+  const messages = existing.messages.map((message, messageIndex) => messageIndex === index
+    ? {
+        ...message,
+        content: changes.content.trim(),
+        metadata: { ...(message.metadata || {}), vaultEditedAt: editedAt }
+      }
+    : message);
+  const updated = { ...existing, messages, updatedAt: editedAt };
+  await saveConversation(updated);
+  return updated;
+}
+
 async function serveFile(response, root, requestedPath) {
   const safePath = normalize(requestedPath).replace(new RegExp(`^\\.${sep}`), '');
   const target = resolve(root, safePath);
@@ -217,7 +265,7 @@ export function createChatGptVaultServer() {
       }
 
       if (request.method === 'GET' && url.pathname === '/api/health') {
-        return json(response, 200, { ok: true, version: '1.0.0', dataDirectory: DATA_DIR }, cors);
+        return json(response, 200, healthPayload(), cors);
       }
 
       if (request.method === 'GET' && url.pathname === '/api/conversations') {
@@ -226,6 +274,18 @@ export function createChatGptVaultServer() {
 
       if (request.method === 'GET' && url.pathname === '/api/conversations/export') {
         const conversations = (await readAllConversations()).filter(Boolean).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        const format = url.searchParams.get('format') || 'chatgpt';
+        if (['markdown', 'json'].includes(format)) {
+          const archive = createConversationArchive(conversations, format);
+          return download(
+            response,
+            archive,
+            `chatgpt-vault-${format}.zip`,
+            'application/zip',
+            cors
+          );
+        }
+        if (format !== 'chatgpt') return json(response, 400, { error: '不支持的导出格式' }, cors);
         return json(response, 200, {
           conversations: conversationsToChatGptExport(conversations),
           format: 'chatgpt-conversations'
@@ -239,6 +299,18 @@ export function createChatGptVaultServer() {
       if (request.method === 'POST' && url.pathname === '/api/conversations/import') {
         const result = await importConversations(await readBody(request));
         return json(response, 200, result, cors);
+      }
+
+      const messageMatch = url.pathname.match(/^\/api\/conversations\/([^/]+)\/messages\/([^/]+)$/);
+      if (messageMatch && request.method === 'PATCH') {
+        const conversation = await updateConversationMessage(
+          decodeURIComponent(messageMatch[1]),
+          decodeURIComponent(messageMatch[2]),
+          await readBody(request)
+        );
+        return conversation
+          ? json(response, 200, { conversation }, cors)
+          : json(response, 404, { error: '没有找到这条对话' }, cors);
       }
 
       const match = url.pathname.match(/^\/api\/conversations\/([^/]+)$/);
@@ -271,6 +343,14 @@ export function createChatGptVaultServer() {
       if (request.method === 'GET' && url.pathname.startsWith('/vendor/katex/')) {
         const vendorPath = decodeURIComponent(url.pathname.slice('/vendor/katex/'.length));
         if (await serveFile(response, KATEX_DIR, vendorPath)) return;
+      }
+
+      if (request.method === 'GET' && url.pathname === '/vendor/html2canvas/html2canvas.min.js') {
+        if (await serveFile(response, HTML2CANVAS_DIR, 'html2canvas.min.js')) return;
+      }
+
+      if (request.method === 'GET' && url.pathname === '/vendor/jspdf/jspdf.umd.min.js') {
+        if (await serveFile(response, JSPDF_DIR, 'jspdf.umd.min.js')) return;
       }
 
       if (request.method === 'GET') {
